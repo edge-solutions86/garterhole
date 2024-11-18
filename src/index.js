@@ -19,3 +19,4 @@ export {
   changingBells,
   supportedStages,
 } from './core/stage.js';
+export { Row, rounds } from './core/row.js';
