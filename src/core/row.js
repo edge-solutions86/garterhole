@@ -1,5 +1,6 @@
 import { isSupportedStage } from './stage.js';
 import { symbolsFromBells } from './bells.js';
+import { assertIntegerInRange, assertNonEmptyArray } from '../util/assert.js';
 
 /**
  * A row is one strike of every bell in the tower, in the order they sound. It
@@ -37,9 +38,7 @@ export class Row {
    * @returns {number}
    */
   bellAt(place) {
-    if (!Number.isInteger(place) || place < 1 || place > this.stage) {
-      throw new RangeError(`place ${place} is outside 1..${this.stage}`);
-    }
+    assertIntegerInRange(place, 1, this.stage, 'place');
     return this.bells[place - 1];
   }
 
@@ -134,14 +133,10 @@ export function rounds(stage) {
  * @param {readonly number[]} bells
  */
 function assertPermutation(bells) {
-  if (bells.length === 0) {
-    throw new RangeError('a row must contain at least one bell');
-  }
+  assertNonEmptyArray(bells, 'a row');
   const seen = new Set();
   for (const bell of bells) {
-    if (!Number.isInteger(bell) || bell < 1 || bell > bells.length) {
-      throw new RangeError(`bell ${bell} is outside 1..${bells.length}`);
-    }
+    assertIntegerInRange(bell, 1, bells.length, 'bell');
     if (seen.has(bell)) {
       throw new RangeError(`bell ${bell} appears more than once`);
     }

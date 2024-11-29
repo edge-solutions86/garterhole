@@ -1,4 +1,5 @@
 import { MAX_STAGE } from './stage.js';
+import { assertIntegerInRange } from '../util/assert.js';
 
 /**
  * Bells are written with a single character each so that a row is a string a
@@ -31,9 +32,7 @@ for (let i = 0; i < BELL_SYMBOLS.length; i += 1) {
  * @returns {string} a single character
  */
 export function bellSymbol(bell) {
-  if (!Number.isInteger(bell) || bell < 1 || bell > MAX_STAGE) {
-    throw new RangeError(`bell ${bell} is outside 1..${MAX_STAGE}`);
-  }
+  assertIntegerInRange(bell, 1, MAX_STAGE, 'bell');
   return BELL_SYMBOLS[bell - 1];
 }
 
@@ -66,9 +65,7 @@ export function isBellSymbol(symbol) {
  * @returns {string}
  */
 export function symbolsForStage(stage) {
-  if (!Number.isInteger(stage) || stage < 1 || stage > MAX_STAGE) {
-    throw new RangeError(`stage ${stage} is outside 1..${MAX_STAGE}`);
-  }
+  assertIntegerInRange(stage, 1, MAX_STAGE, 'stage');
   return BELL_SYMBOLS.slice(0, stage);
 }
 

@@ -22,7 +22,7 @@ describe('Row construction', () => {
   });
 
   it('refuses an empty row', () => {
-    expect(() => new Row([])).toThrow(/at least one bell/);
+    expect(() => new Row([])).toThrow(/a row must not be empty/);
   });
 
   it('refuses a repeated bell', () => {
