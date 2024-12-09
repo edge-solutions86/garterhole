@@ -2,6 +2,7 @@ import { Row } from './row.js';
 import { bellFromSymbol, isBellSymbol } from './bells.js';
 import { isSupportedStage } from './stage.js';
 import { assertNonEmptyString } from '../util/assert.js';
+import { NotationError } from '../errors.js';
 
 /**
  * Rows arrive as text far more often than as arrays: out of a composition
@@ -23,14 +24,15 @@ export function parseRow(text, options = {}) {
   assertNonEmptyString(text, 'a row');
   const trimmed = text.trim();
   if (trimmed.length === 0) {
-    throw new SyntaxError('a row must not be blank');
+    throw new NotationError('a row must not be blank', { source: text });
   }
   const bells = [];
   for (let index = 0; index < trimmed.length; index += 1) {
     const symbol = trimmed[index];
     if (!isBellSymbol(symbol)) {
-      throw new SyntaxError(
+      throw new NotationError(
         `${JSON.stringify(symbol)} at position ${index + 1} of ${JSON.stringify(trimmed)} is not a bell`,
+        { source: trimmed, position: index + 1 },
       );
     }
     bells.push(bellFromSymbol(symbol));
@@ -40,8 +42,9 @@ export function parseRow(text, options = {}) {
       throw new RangeError(`stage ${options.stage} is not supported`);
     }
     if (bells.length !== options.stage) {
-      throw new SyntaxError(
+      throw new NotationError(
         `row ${JSON.stringify(trimmed)} has ${bells.length} bells but the stage is ${options.stage}`,
+        { source: trimmed, details: { stage: options.stage, found: bells.length } },
       );
     }
   }
