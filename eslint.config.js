@@ -31,6 +31,12 @@ export default [
     },
   },
   {
+    files: ['scripts/**/*.mjs', 'bin/**/*.js'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+  {
     files: ['tests/**/*.js'],
     languageOptions: {
       globals: {
