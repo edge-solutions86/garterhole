@@ -80,16 +80,27 @@ export function isPalindromic(changes) {
  * @returns {number | null}
  */
 export function findSymmetryPoint(changes) {
+  const axes = symmetryPoints(changes);
+  return axes.length === 0 ? null : axes[0];
+}
+
+/**
+ * Every index the lead reflects about, ascending. A palindromic lead has two
+ * of them, one at each end of the mirror, and the pair is what the notation
+ * writer needs in order to fold the lead back up.
+ *
+ * @param {readonly import('../core/change.js').Change[]} changes
+ * @returns {number[]}
+ */
+export function symmetryPoints(changes) {
   const count = changes.length;
-  if (count === 0) {
-    return null;
-  }
+  const axes = [];
   for (let axis = 0; axis < count; axis += 1) {
     if (reflectsAbout(changes, axis)) {
-      return axis;
+      axes.push(axis);
     }
   }
-  return null;
+  return axes;
 }
 
 /**
