@@ -1,5 +1,6 @@
 import { Row, rounds } from './row.js';
 import { assertInteger } from '../util/assert.js';
+import { orderOf } from './cycles.js';
 
 /**
  * Rows compose. Applying one row to another is how a course head is stepped on
@@ -82,17 +83,7 @@ export function power(row, exponent) {
  */
 export function order(row) {
   assertRow(row, 'row');
-  let current = row;
-  let steps = 1;
-  const ceiling = factorialCeiling(row.stage);
-  while (!current.isRounds()) {
-    current = transpose(current, row);
-    steps += 1;
-    if (steps > ceiling) {
-      throw new RangeError('row does not return to rounds, which cannot happen');
-    }
-  }
-  return steps;
+  return orderOf(row);
 }
 
 /**
@@ -133,19 +124,4 @@ function assertSameStage(left, right) {
   if (left.stage !== right.stage) {
     throw new RangeError(`cannot combine a row of ${left.stage} with a row of ${right.stage}`);
   }
-}
-
-/**
- * A generous ceiling on how many steps an order search can take, used only to
- * turn a corrupted row into an error rather than a hang.
- *
- * @param {number} stage
- * @returns {number}
- */
-function factorialCeiling(stage) {
-  let total = 1;
-  for (let i = 2; i <= stage; i += 1) {
-    total *= i;
-  }
-  return total;
 }
