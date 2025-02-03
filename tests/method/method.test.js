@@ -5,7 +5,7 @@ import { parseRow } from '../../src/core/rowParse.js';
 import { ValidationError } from '../../src/errors.js';
 
 const plainBobMinor = () => method('Plain Bob', 6, 'x1x1x1,2');
-const cambridgeMinor = () => method('Cambridge Surprise', 6, 'x3x4x2x3x4x5,2');
+const cambridgeMinor = () => method('Cambridge Surprise', 6, 'x36x14x12x36x14x56,12');
 const grandsireDoubles = () => method('Grandsire', 5, '3,1.5.1.5.1');
 
 describe('Method construction', () => {
