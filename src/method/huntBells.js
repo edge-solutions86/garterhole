@@ -110,16 +110,23 @@ export function placesMade(path, stage) {
  * Describe the shape of a hunt bell's path. The answer decides most of the
  * method's class name.
  *
+ * The turns at the top and the bottom of the path are the ones every bell
+ * makes, so they are not counted. In a little method the top of the path is not
+ * the back of the row, which is why the highest place the bell reaches is used
+ * rather than the stage. Getting that wrong makes Little Bob look like an
+ * Alliance method.
+ *
  * @param {Method} method
  * @param {number} bell
  * @returns {'plain' | 'treble bob' | 'treble place'}
  */
 export function huntPathKind(method, bell) {
   const path = pathOf(method, bell);
-  if (placesMade(path, method.stage).length > 0) {
+  const top = Math.max(...path);
+  if (placesMade(path, top).length > 0) {
     return 'treble place';
   }
-  if (dodgePlaces(path, method.stage).length > 0) {
+  if (dodgePlaces(path, top).length > 0) {
     return 'treble bob';
   }
   return 'plain';
