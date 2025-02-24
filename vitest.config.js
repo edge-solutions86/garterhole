@@ -9,5 +9,16 @@ export default defineConfig({
     clearMocks: true,
     reporters: ['default'],
     testTimeout: 10000,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'lcov'],
+      include: ['src/**/*.js'],
+      thresholds: {
+        lines: 80,
+        functions: 80,
+        branches: 75,
+        statements: 80,
+      },
+    },
   },
 });
