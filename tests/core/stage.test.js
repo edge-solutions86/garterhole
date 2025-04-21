@@ -6,7 +6,8 @@ import {
   stageName,
   stageFromName,
   isOddStage,
-  changingBells,
+  hasCover,
+  bellsInTower,
   supportedStages,
 } from '../../src/core/stage.js';
 
@@ -69,12 +70,18 @@ describe('cover bells', () => {
   it('treats odd stages as covered', () => {
     expect(isOddStage(5)).toBe(true);
     expect(isOddStage(6)).toBe(false);
+    expect(hasCover(5)).toBe(true);
+    expect(hasCover(6)).toBe(false);
   });
 
-  it('drops the cover bell from the changing bells', () => {
-    expect(changingBells(5)).toBe(4);
-    expect(changingBells(7)).toBe(6);
-    expect(changingBells(8)).toBe(8);
+  it('counts the cover bell as an extra bell in the tower', () => {
+    expect(bellsInTower(5)).toBe(6);
+    expect(bellsInTower(7)).toBe(8);
+  });
+
+  it('leaves an even stage alone', () => {
+    expect(bellsInTower(8)).toBe(8);
+    expect(bellsInTower(12)).toBe(12);
   });
 });
 

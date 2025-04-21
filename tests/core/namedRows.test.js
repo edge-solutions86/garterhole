@@ -20,8 +20,8 @@ describe('queens', () => {
     expect(queens(12).toString()).toBe('13579E24680T');
   });
 
-  it('leaves the cover bell behind on an odd stage', () => {
-    expect(queens(5).toString()).toBe('13245');
+  it('uses every bell of an odd stage, since the cover is not one of them', () => {
+    expect(queens(5).toString()).toBe('13524');
   });
 });
 
@@ -41,8 +41,9 @@ describe('tittums', () => {
     expect(tittums(6).toString()).toBe('142536');
   });
 
-  it('interleaves the changing bells on an odd stage', () => {
-    expect(tittums(7).toString()).toBe('1425367');
+  it('interleaves an odd stage as evenly as it can', () => {
+    expect(tittums(7).toString()).toBe('1526374');
+    expect(tittums(5).toString()).toBe('14253');
   });
 });
 
@@ -51,8 +52,8 @@ describe('backrounds', () => {
     expect(backrounds(8).toString()).toBe('87654321');
   });
 
-  it('keeps the cover bell at the back', () => {
-    expect(backrounds(5).toString()).toBe('43215');
+  it('reverses an odd stage as well', () => {
+    expect(backrounds(5).toString()).toBe('54321');
   });
 });
 

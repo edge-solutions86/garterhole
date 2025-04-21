@@ -70,9 +70,6 @@ export function stageFromName(name) {
 }
 
 /**
- * Odd stages are rung with the tenor covering, so the number of bells that
- * actually change places is one less than the number of bells in the tower.
- *
  * @param {number} stage
  * @returns {boolean}
  */
@@ -81,14 +78,29 @@ export function isOddStage(stage) {
 }
 
 /**
- * The number of bells taking part in the changes. On an odd stage the cover
- * bell stands behind and is not part of the permutation.
+ * True when the stage is normally rung with a bell covering behind.
+ *
+ * The cover bell is not part of the stage. Doubles is five bells changing, and
+ * the tower rings it on six with the tenor behind. Counting the cover into the
+ * stage is a mistake that makes the extent of Doubles come out as twenty four
+ * rows instead of a hundred and twenty.
+ *
+ * @param {number} stage
+ * @returns {boolean}
+ */
+export function hasCover(stage) {
+  return isOddStage(stage);
+}
+
+/**
+ * How many bells the tower has to have to ring the stage, which is one more
+ * than the stage when a bell covers.
  *
  * @param {number} stage
  * @returns {number}
  */
-export function changingBells(stage) {
-  return isOddStage(stage) ? stage - 1 : stage;
+export function bellsInTower(stage) {
+  return hasCover(stage) ? stage + 1 : stage;
 }
 
 /**

@@ -1,14 +1,14 @@
 import { Row, rounds } from './row.js';
-import { isSupportedStage, changingBells } from './stage.js';
+import { isSupportedStage } from './stage.js';
 
 /**
  * A handful of rows have names, and a band that rings one on the way past will
  * mention it in the pub afterwards. The music scorer counts them, so they have
  * to be built rather than typed in for every stage.
  *
- * Every named row here is defined over the bells that actually change. On an
- * odd stage the tenor covers, so Queens on Doubles is 13524 with the tenor
- * behind rather than an attempt to interleave six bells.
+ * Every named row here is defined over the bells of the stage. The cover bell
+ * on an odd stage is not part of the stage, so Queens on Doubles is 13524 and
+ * the tenor stands behind it.
  */
 
 /**
@@ -54,10 +54,13 @@ export function kings(stage) {
  */
 export function tittums(stage) {
   return buildNamedRow(stage, (working) => {
-    const half = working / 2;
+    const half = Math.ceil(working / 2);
     const bells = [];
     for (let index = 0; index < half; index += 1) {
-      bells.push(index + 1, half + index + 1);
+      bells.push(index + 1);
+      if (half + index + 1 <= working) {
+        bells.push(half + index + 1);
+      }
     }
     return bells;
   });
@@ -132,9 +135,6 @@ export function nameOfRow(row) {
 }
 
 /**
- * Build a named row over the changing bells and put the cover bells back on
- * the end.
- *
  * @param {number} stage
  * @param {(working: number) => number[]} build
  * @returns {Row}
@@ -143,10 +143,5 @@ function buildNamedRow(stage, build) {
   if (!isSupportedStage(stage)) {
     throw new RangeError(`stage ${stage} is not supported`);
   }
-  const working = changingBells(stage);
-  const bells = build(working);
-  for (let bell = working + 1; bell <= stage; bell += 1) {
-    bells.push(bell);
-  }
-  return new Row(bells);
+  return new Row(build(stage));
 }

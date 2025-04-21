@@ -16,7 +16,8 @@ export {
   stageName,
   stageFromName,
   isOddStage,
-  changingBells,
+  hasCover,
+  bellsInTower,
   supportedStages,
 } from './core/stage.js';
 export { Row, rounds } from './core/row.js';
