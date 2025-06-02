@@ -25,6 +25,71 @@ import { ValidationError } from '../errors.js';
  */
 
 /**
+ * A running check on truth. Rows are handed in one at a time and the tracker
+ * says at once whether the row has been rung before, so a search that is
+ * building a composition can stop at the first repeat rather than ringing the
+ * whole thing and proving it afterwards.
+ */
+export class TruthTracker {
+  constructor() {
+    /** @type {Map<string, number[]>} */
+    this.seen = new Map();
+    this.count = 0;
+  }
+
+  /**
+   * Offer a row.
+   *
+   * @param {import('../core/row.js').Row} row
+   * @returns {boolean} false when the row has been rung before
+   */
+  add(row) {
+    const key = row.key();
+    const at = this.seen.get(key);
+    if (at === undefined) {
+      this.seen.set(key, [this.count]);
+      this.count += 1;
+      return true;
+    }
+    at.push(this.count);
+    this.count += 1;
+    return false;
+  }
+
+  /**
+   * @returns {boolean}
+   */
+  isTrue() {
+    for (const at of this.seen.values()) {
+      if (at.length > 1) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * @returns {Repeat[]} the repeats found so far, in the order they started
+   */
+  repeats() {
+    const repeats = [];
+    for (const [row, at] of this.seen) {
+      if (at.length > 1) {
+        repeats.push({ row, at: [...at] });
+      }
+    }
+    return repeats.sort((left, right) => left.at[0] - right.at[0]);
+  }
+
+  /**
+   * @returns {number} how many different rows have been offered
+   */
+  get distinct() {
+    return this.seen.size;
+  }
+}
+
+/**
  * Prove a block of rows.
  *
  * @param {RowBlock} block
@@ -35,30 +100,16 @@ export function prove(block) {
     throw new ValidationError('a RowBlock is needed to prove it');
   }
   const comesRound = block.comesRound();
-  const body = comesRound && block.length > 1 ? block.rows.slice(0, -1) : block.rows;
-  /** @type {Map<string, number[]>} */
-  const seen = new Map();
-  body.forEach((row, index) => {
-    const key = row.key();
-    const at = seen.get(key);
-    if (at === undefined) {
-      seen.set(key, [index]);
-    } else {
-      at.push(index);
-    }
-  });
-  const repeats = [];
-  for (const [row, at] of seen) {
-    if (at.length > 1) {
-      repeats.push({ row, at });
-    }
+  const tracker = new TruthTracker();
+  const upTo = comesRound && block.length > 1 ? block.length - 1 : block.length;
+  for (let index = 0; index < upTo; index += 1) {
+    tracker.add(block.at(index));
   }
-  repeats.sort((left, right) => left.at[0] - right.at[0]);
   return {
-    isTrue: repeats.length === 0,
-    rows: body.length,
-    distinct: seen.size,
-    repeats,
+    isTrue: tracker.isTrue(),
+    rows: tracker.count,
+    distinct: tracker.distinct,
+    repeats: tracker.repeats(),
     comesRound,
   };
 }

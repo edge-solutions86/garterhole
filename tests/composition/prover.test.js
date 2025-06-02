@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  TruthTracker,
   prove,
   proveTouch,
   extentSize,
@@ -131,5 +132,45 @@ describe('reporting a proof', () => {
     expect(describeProof(prove(plainBobMinor().plainLead()))).toBe(
       'true, 13 rows, but it does not come round',
     );
+  });
+});
+
+describe('TruthTracker', () => {
+  it('accepts a row it has not seen', () => {
+    const tracker = new TruthTracker();
+    expect(tracker.add(rounds(4))).toBe(true);
+    expect(tracker.add(parseRow('2143'))).toBe(true);
+    expect(tracker.isTrue()).toBe(true);
+  });
+
+  it('rejects a row it has seen before', () => {
+    const tracker = new TruthTracker();
+    tracker.add(rounds(4));
+    expect(tracker.add(rounds(4))).toBe(false);
+    expect(tracker.isTrue()).toBe(false);
+  });
+
+  it('counts every row offered and every distinct one', () => {
+    const tracker = new TruthTracker();
+    tracker.add(rounds(4));
+    tracker.add(rounds(4));
+    tracker.add(parseRow('2143'));
+    expect(tracker.count).toBe(3);
+    expect(tracker.distinct).toBe(2);
+  });
+
+  it('says where each repeat was', () => {
+    const tracker = new TruthTracker();
+    tracker.add(rounds(4));
+    tracker.add(parseRow('2143'));
+    tracker.add(rounds(4));
+    expect(tracker.repeats()).toEqual([{ row: '1234', at: [0, 2] }]);
+  });
+
+  it('starts empty and true', () => {
+    const tracker = new TruthTracker();
+    expect(tracker.isTrue()).toBe(true);
+    expect(tracker.distinct).toBe(0);
+    expect(tracker.repeats()).toEqual([]);
   });
 });
