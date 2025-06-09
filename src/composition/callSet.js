@@ -1,8 +1,10 @@
-import { Call, call } from './call.js';
-import { huntBells } from '../method/huntBells.js';
-import { Method } from '../method/method.js';
+import { call } from './call.js';
+import { defaultRegistry } from './callRegistry.js';
 import { bellSymbol } from '../core/bells.js';
 import { ValidationError } from '../errors.js';
+
+/** @type {import('./callRegistry.js').CallRegistry | null} */
+let shared = null;
 
 /**
  * The calls a band expects to be given for a method, without anybody having to
@@ -49,18 +51,37 @@ export function thirdsPlaceCalls(stage) {
 }
 
 /**
- * The calls that go with a method, chosen from the number of hunt bells it has.
+ * The calls that go with a method. The choice is made by the registry, which
+ * is where a tower adds its own families.
  *
  * @param {Method} method
+ * @param {import('./callRegistry.js').CallRegistry} [registry]
  * @returns {{ plain: Call, bob: Call, single: Call }}
  */
-export function standardCalls(method) {
-  if (!(method instanceof Method)) {
-    throw new ValidationError('a Method is needed to choose its calls');
+export function standardCalls(method, registry) {
+  const chosen = registry ?? sharedRegistry();
+  return chosen.callsFor(method);
+}
+
+/**
+ * The registry built once and reused, so that a tower registering an entry
+ * once affects every later lookup.
+ *
+ * @returns {import('./callRegistry.js').CallRegistry}
+ */
+export function sharedRegistry() {
+  if (shared === null) {
+    shared = defaultRegistry();
   }
-  const hunts = huntBells(method);
-  const pair = hunts.length >= 2 ? thirdsPlaceCalls(method.stage) : fourthsPlaceCalls(method.stage);
-  return { plain: Call.plain(method.stage), ...pair };
+  return shared;
+}
+
+/**
+ * Throw the shared registry away, which the tests need and a long running
+ * process reloading its configuration wants.
+ */
+export function resetRegistry() {
+  shared = null;
 }
 
 /**
