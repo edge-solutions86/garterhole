@@ -189,3 +189,26 @@ describe('badPatches', () => {
     expect(() => badPatches([], -1)).toThrow(ValidationError);
   });
 });
+
+describe('the accumulator underneath', () => {
+  it('gives the same answer as folding the errors by hand', () => {
+    const errors = blowErrors(
+      struckLead((bell) => (bell === 2 ? 45 : 0)),
+      model(),
+    );
+    const values = errors.map((entry) => entry.error);
+    const byHand = Math.sqrt(
+      values.reduce((total, value) => total + value * value, 0) / values.length,
+    );
+    expect(accuracy(errors).rms).toBeCloseTo(byHand, 9);
+  });
+
+  it('keeps the worst blow rather than only its size', () => {
+    const errors = blowErrors(
+      struckLead((bell, rowIndex) => (bell === 6 && rowIndex === 2 ? -120 : 0)),
+      model(),
+    );
+    expect(accuracy(errors).worst.bell).toBe(6);
+    expect(accuracy(errors).worst.error).toBe(-120);
+  });
+});

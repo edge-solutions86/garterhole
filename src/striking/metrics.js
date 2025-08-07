@@ -1,5 +1,5 @@
 import { TimingModel } from './timingModel.js';
-import { mean } from '../util/collections.js';
+import { ErrorAccumulator, AccumulatorSet } from './accumulator.js';
 import { ValidationError } from '../errors.js';
 
 /**
@@ -62,11 +62,11 @@ export function blowErrors(rows, model) {
  * @returns {number}
  */
 export function rootMeanSquare(errors) {
-  if (errors.length === 0) {
-    return 0;
+  const accumulator = new ErrorAccumulator();
+  for (const error of errors) {
+    accumulator.add(error);
   }
-  const squares = errors.reduce((total, error) => total + error * error, 0);
-  return Math.sqrt(squares / errors.length);
+  return accumulator.rms;
 }
 
 /**
@@ -76,18 +76,13 @@ export function rootMeanSquare(errors) {
  * @returns {{ blows: number, rms: number, meanError: number, worst: BlowError | null }}
  */
 export function accuracy(errors) {
-  const values = errors.map((entry) => entry.error);
-  let worst = null;
+  const accumulator = new ErrorAccumulator();
   for (const entry of errors) {
-    if (worst === null || Math.abs(entry.error) > Math.abs(worst.error)) {
-      worst = entry;
-    }
+    accumulator.add(entry.error, entry);
   }
   return {
-    blows: errors.length,
-    rms: rootMeanSquare(values),
-    meanError: mean(values) ?? 0,
-    worst,
+    ...accumulator.summary(),
+    worst: accumulator.worst === null ? null : accumulator.worst.source,
   };
 }
 
@@ -98,25 +93,7 @@ export function accuracy(errors) {
  * @returns {Map<number, { blows: number, rms: number, meanError: number }>}
  */
 export function accuracyByBell(errors) {
-  /** @type {Map<number, number[]>} */
-  const byBell = new Map();
-  for (const entry of errors) {
-    const bucket = byBell.get(entry.bell);
-    if (bucket === undefined) {
-      byBell.set(entry.bell, [entry.error]);
-    } else {
-      bucket.push(entry.error);
-    }
-  }
-  const summary = new Map();
-  for (const [bell, values] of [...byBell.entries()].sort((left, right) => left[0] - right[0])) {
-    summary.set(bell, {
-      blows: values.length,
-      rms: rootMeanSquare(values),
-      meanError: mean(values) ?? 0,
-    });
-  }
-  return summary;
+  return byKey(errors, (entry) => entry.bell).summaries((left, right) => left - right);
 }
 
 /**
@@ -126,19 +103,23 @@ export function accuracyByBell(errors) {
  * @returns {{ rowIndex: number, rms: number }[]}
  */
 export function accuracyByRow(errors) {
-  /** @type {Map<number, number[]>} */
-  const byRow = new Map();
+  const summaries = byKey(errors, (entry) => entry.rowIndex).summaries(
+    (left, right) => left - right,
+  );
+  return [...summaries.entries()].map(([rowIndex, summary]) => ({ rowIndex, rms: summary.rms }));
+}
+
+/**
+ * @param {readonly BlowError[]} errors
+ * @param {(entry: BlowError) => unknown} keyOf
+ * @returns {AccumulatorSet}
+ */
+function byKey(errors, keyOf) {
+  const set = new AccumulatorSet();
   for (const entry of errors) {
-    const bucket = byRow.get(entry.rowIndex);
-    if (bucket === undefined) {
-      byRow.set(entry.rowIndex, [entry.error]);
-    } else {
-      bucket.push(entry.error);
-    }
+    set.add(keyOf(entry), entry.error, entry);
   }
-  return [...byRow.entries()]
-    .sort((left, right) => left[0] - right[0])
-    .map(([rowIndex, values]) => ({ rowIndex, rms: rootMeanSquare(values) }));
+  return set;
 }
 
 /**
@@ -148,15 +129,7 @@ export function accuracyByRow(errors) {
  * @returns {number | null}
  */
 export function worstBell(errors) {
-  let worst = null;
-  let worstRms = -1;
-  for (const [bell, summary] of accuracyByBell(errors)) {
-    if (summary.rms > worstRms) {
-      worst = bell;
-      worstRms = summary.rms;
-    }
-  }
-  return worst;
+  return byKey(errors, (entry) => entry.bell).worstKey();
 }
 
 /**
