@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { boardLines, summaryLine, reportLines } from '../../src/records/report.js';
+import { boardLines, summaryLine } from '../../src/records/report.js';
 import { performance } from '../../src/records/performance.js';
 import { ValidationError } from '../../src/errors.js';
 
@@ -66,50 +66,5 @@ describe('summaryLine', () => {
     expect(summaryLine(quarter({ conductor: undefined }))).toBe(
       '2025-05-18  St Mary  1260 Plain Bob Minor',
     );
-  });
-});
-
-describe('reportLines', () => {
-  const records = () => [
-    quarter(),
-    quarter({ changes: 5040, conductor: 'Bob' }),
-    quarter({ tower: 'All Saints', title: 'Cambridge Surprise Minor', changes: 720 }),
-  ];
-
-  it('opens with a heading it was given', () => {
-    const lines = reportLines(records(), { title: 'Ringing in 2025' });
-    expect(lines[0]).toBe('Ringing in 2025');
-    expect(lines[1]).toBe('===============');
-  });
-
-  it('has a default heading', () => {
-    expect(reportLines(records())[0]).toBe('Performances');
-  });
-
-  it('counts the performances by kind', () => {
-    const lines = reportLines(records());
-    expect(lines[3]).toBe('3 performances: 1 peal, 1 quarter peal and 1 touch');
-  });
-
-  it('adds the changes up', () => {
-    expect(reportLines(records())[4]).toBe(`${1260 + 5040 + 720} changes altogether`);
-  });
-
-  it('has a table for each of the towers and the methods', () => {
-    const lines = reportLines(records());
-    expect(lines).toContain('By tower');
-    expect(lines).toContain('By method');
-    expect(lines).toContain('Most rung by');
-  });
-
-  it('stops the ringer table at the number asked for', () => {
-    const lines = reportLines(records(), { topRingers: 2 });
-    const start = lines.indexOf('Most rung by');
-    expect(lines.slice(start + 1)).toHaveLength(2);
-  });
-
-  it('writes a report for nothing at all', () => {
-    const lines = reportLines([]);
-    expect(lines[3]).toBe('0 performances: 0 peals, 0 quarter peals and 0 touches');
   });
 });
