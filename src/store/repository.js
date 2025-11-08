@@ -84,10 +84,7 @@ export class Repository {
     if (document === undefined) {
       throw new ValidationError('there is no document to file');
     }
-    const record = { op: PUT, collection, id, document };
-    this.journal.append(record);
-    applyRecord(this.collections, record, this.applied);
-    this.applied += 1;
+    this.applyBatch([{ op: PUT, collection, id, document }]);
     return this;
   }
 
@@ -104,11 +101,32 @@ export class Repository {
     if (!this.has(collection, id)) {
       return false;
     }
-    const record = { op: DELETE, collection, id };
-    this.journal.append(record);
-    applyRecord(this.collections, record, this.applied);
-    this.applied += 1;
+    this.applyBatch([{ op: DELETE, collection, id }]);
     return true;
+  }
+
+  /**
+   * Write several changes as one append, so that they land together or not at
+   * all. Every write goes through here, which is what makes a single put and a
+   * whole unit of work follow the same path.
+   *
+   * @param {readonly unknown[]} changes
+   * @returns {number} how many landed
+   */
+  applyBatch(changes) {
+    if (!Array.isArray(changes)) {
+      throw new ValidationError('a batch of changes must be an array');
+    }
+    if (changes.length === 0) {
+      return 0;
+    }
+    changes.forEach((change, offset) => checkRecord(change, this.applied + offset));
+    this.journal.appendAll(changes);
+    changes.forEach((change, offset) =>
+      applyRecord(this.collections, change, this.applied + offset),
+    );
+    this.applied += changes.length;
+    return changes.length;
   }
 
   /**
@@ -194,11 +212,14 @@ export class Repository {
 }
 
 /**
- * @param {Map<string, Map<string, unknown>>} state
+ * Check that a record is a change this can apply, without applying it. Doing
+ * this before anything is written is what lets a bad batch be refused rather
+ * than half written.
+ *
  * @param {unknown} record
  * @param {number} index
  */
-function applyRecord(state, record, index) {
+function checkRecord(record, index) {
   if (record === null || typeof record !== 'object') {
     throw new StorageError(`record ${index} is not a change`, { details: { index } });
   }
@@ -206,6 +227,21 @@ function applyRecord(state, record, index) {
   if (typeof collection !== 'string' || typeof id !== 'string') {
     throw new StorageError(`record ${index} does not say what it changes`, { details: { index } });
   }
+  if (op !== PUT && op !== DELETE) {
+    throw new StorageError(`record ${index} has an operation this cannot apply: ${op}`, {
+      details: { index, op },
+    });
+  }
+}
+
+/**
+ * @param {Map<string, Map<string, unknown>>} state
+ * @param {unknown} record
+ * @param {number} index
+ */
+function applyRecord(state, record, index) {
+  checkRecord(record, index);
+  const { op, collection, id } = record;
   if (op === PUT) {
     let held = state.get(collection);
     if (held === undefined) {
@@ -215,13 +251,7 @@ function applyRecord(state, record, index) {
     held.set(id, record.document);
     return;
   }
-  if (op === DELETE) {
-    state.get(collection)?.delete(id);
-    return;
-  }
-  throw new StorageError(`record ${index} has an operation this cannot apply: ${op}`, {
-    details: { index, op },
-  });
+  state.get(collection)?.delete(id);
 }
 
 /**
