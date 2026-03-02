@@ -45,13 +45,13 @@ export class Performance {
       assertNonEmptyString(name, `the ringer of bell ${index + 1}`);
       return squash(name);
     });
-    if (definition.conductor !== undefined && !band.includes(squash(definition.conductor))) {
+    if (isGiven(definition.conductor) && !band.includes(squash(definition.conductor))) {
       throw new ValidationError(
         `the conductor ${JSON.stringify(definition.conductor)} is not in the band`,
       );
     }
     if (
-      definition.duration !== undefined &&
+      isGiven(definition.duration) &&
       (!Number.isInteger(definition.duration) || definition.duration < 1)
     ) {
       throw new ValidationError(`${definition.duration} is not a length of time in minutes`);
@@ -62,9 +62,9 @@ export class Performance {
     this.changes = definition.changes;
     /** @type {readonly string[]} */
     this.band = Object.freeze(band);
-    this.conductor = definition.conductor === undefined ? null : squash(definition.conductor);
-    this.composer = definition.composer === undefined ? null : squash(definition.composer);
-    this.duration = definition.duration ?? null;
+    this.conductor = isGiven(definition.conductor) ? squash(definition.conductor) : null;
+    this.composer = isGiven(definition.composer) ? squash(definition.composer) : null;
+    this.duration = isGiven(definition.duration) ? definition.duration : null;
     /** @type {readonly string[]} */
     this.footnotes = Object.freeze([...(definition.footnotes ?? [])]);
     Object.freeze(this);
@@ -145,6 +145,19 @@ export class Performance {
   toString() {
     return `${this.tower}, ${this.dateText}: ${this.changes} ${this.title}`;
   }
+}
+
+/**
+ * True when an optional field was actually given. A record that has been read
+ * back out of the store carries `null` where a field was missing, and treating
+ * that as a value rather than as an absence is how a performance with no
+ * conductor comes back refusing to be rebuilt.
+ *
+ * @param {unknown} value
+ * @returns {boolean}
+ */
+function isGiven(value) {
+  return value !== undefined && value !== null;
 }
 
 /**
