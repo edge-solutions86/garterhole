@@ -50,8 +50,12 @@ describe('refusing bad settings', () => {
   });
 
   it('refuses a port outside the range', () => {
-    expect(() => loadConfig({ GARTERHOLE_PORT: '0' })).toThrow(/must be a port number, not 0/);
+    expect(() => loadConfig({ GARTERHOLE_PORT: '-1' })).toThrow(/must be a port number, not -1/);
     expect(() => loadConfig({ GARTERHOLE_PORT: '70000' })).toThrow(ConfigError);
+  });
+
+  it('allows port zero, which means let the machine choose', () => {
+    expect(loadConfig({ GARTERHOLE_PORT: '0' }).port).toBe(0);
   });
 
   it('refuses a rate limit that allows nothing', () => {

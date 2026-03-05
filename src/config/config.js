@@ -13,6 +13,10 @@ import { ConfigError } from '../errors.js';
  * Anything wrong in the environment is fatal at start up rather than at the
  * first request, because a service running with a port it did not want is
  * harder to notice than one that refused to start.
+ *
+ * Port zero is allowed and means what it means everywhere else: let the
+ * operating system choose one. That is what the tests use, and what a tower
+ * running several copies behind a proxy wants.
  */
 
 /** The settings, their defaults and how their text is read. */
@@ -72,7 +76,7 @@ export function loadConfig(environment = {}) {
       });
     }
   }
-  if (settings.port < 1 || settings.port > 65535) {
+  if (settings.port < 0 || settings.port > 65535) {
     throw new ConfigError(`GARTERHOLE_PORT must be a port number, not ${settings.port}`);
   }
   if (settings.requestsPerMinute < 1) {
