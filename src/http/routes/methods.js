@@ -1,4 +1,5 @@
 import { json, created, noContent } from '../response.js';
+import { paginate } from '../pagination.js';
 import { check, object, string } from '../../validation/schema.js';
 import { stage, placeNotation, methodTitle, touch } from '../../validation/types.js';
 import { ValidationError } from '../../errors.js';
@@ -46,7 +47,7 @@ export function addMethodRoutes(router) {
       }
       return true;
     });
-    return json({ methods: filtered, total: filtered.length });
+    return json(paginate(request, filtered, 'methods'));
   });
 
   router.post('/methods', async (request, context) => {

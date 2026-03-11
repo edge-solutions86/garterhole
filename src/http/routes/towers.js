@@ -1,4 +1,5 @@
 import { json, created, noContent } from '../response.js';
+import { paginate } from '../pagination.js';
 import { check, object, string, number, arrayOf, optional } from '../../validation/schema.js';
 import { Tower } from '../../tower/tower.js';
 import { Bell, bellWeighing } from '../../tower/bell.js';
@@ -38,10 +39,9 @@ const NEW_TOWER = object({
  * @returns {import('../router.js').Router}
  */
 export function addTowerRoutes(router) {
-  router.get('/towers', async (_request, context) => {
-    const towers = context.service.listTowers();
-    return json({ towers, total: towers.length });
-  });
+  router.get('/towers', async (request, context) =>
+    json(paginate(request, context.service.listTowers(), 'towers')),
+  );
 
   router.post('/towers', async (request, context) => {
     const body = check(NEW_TOWER, request.body, 'the tower');

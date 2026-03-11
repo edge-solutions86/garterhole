@@ -1,4 +1,5 @@
 import { json, created, text } from '../response.js';
+import { paginate } from '../pagination.js';
 import { check, object, string, arrayOf, optional, number } from '../../validation/schema.js';
 import { methodTitle, isoDate, changeCount } from '../../validation/types.js';
 import { Performance } from '../../records/performance.js';
@@ -52,7 +53,7 @@ export function addPerformanceRoutes(router) {
       }
       return true;
     });
-    return json({ performances: filtered, total: filtered.length });
+    return json(paginate(request, filtered, 'performances'));
   });
 
   router.post('/performances', async (request, context) => {
