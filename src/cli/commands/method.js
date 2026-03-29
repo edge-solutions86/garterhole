@@ -1,4 +1,4 @@
-import { requireFlag, requireNumber } from '../args.js';
+import { requireFlag, requireNumber, phraseFlag } from '../args.js';
 import { ValidationError } from '../../errors.js';
 
 /**
@@ -105,27 +105,13 @@ export function removeMethod(parsed, context) {
 }
 
 /**
- * The title, from the flag and whatever followed it.
- *
- * A method title has spaces in it, so a ringer who forgets to quote it types
- * `--title Cambridge Surprise Major` and the shell hands over three words. The
- * flag takes the first and the rest arrive as leftovers, so both are joined
- * back together rather than the command refusing something that was perfectly
- * clear.
+ * The title of the method a command is about.
  *
  * @param {import('../args.js').ParsedArgs} parsed
  * @returns {string}
  */
 export function titleFrom(parsed) {
-  const words = [];
-  if (parsed.flags.title !== undefined && parsed.flags.title !== true) {
-    words.push(String(parsed.flags.title));
-  }
-  words.push(...parsed.rest);
-  if (words.length === 0) {
-    throw new ValidationError('this command needs --title');
-  }
-  return words.join(' ');
+  return phraseFlag(parsed, 'title');
 }
 
 /**

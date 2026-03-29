@@ -84,6 +84,39 @@ export function requireFlag(parsed, name, fallback) {
 }
 
 /**
+ * A flag whose value is a phrase, taking the words that followed it as well.
+ *
+ * A method title has spaces in it, and a ringer who forgets to quote it types
+ * `--title Cambridge Surprise Major`. The shell hands over three words, the
+ * flag takes the first and the other two arrive as leftovers, so they are
+ * joined back together rather than the command refusing something that was
+ * perfectly clear.
+ *
+ * Only one flag in a command may do this, since there is one pile of leftovers
+ * to go round.
+ *
+ * @param {ParsedArgs} parsed
+ * @param {string} name
+ * @param {string} [fallback]
+ * @returns {string}
+ */
+export function phraseFlag(parsed, name, fallback) {
+  const words = [];
+  const value = parsed.flags[name];
+  if (value !== undefined && value !== true) {
+    words.push(String(value));
+  }
+  words.push(...parsed.rest);
+  if (words.length === 0) {
+    if (fallback !== undefined) {
+      return fallback;
+    }
+    throw new ValidationError(`this command needs --${name}`);
+  }
+  return words.join(' ');
+}
+
+/**
  * A flag as a whole number.
  *
  * @param {ParsedArgs} parsed

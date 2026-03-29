@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { parseArgs, requireFlag, requireNumber, flagIsSet } from '../../src/cli/args.js';
+import {
+  parseArgs,
+  requireFlag,
+  requireNumber,
+  flagIsSet,
+  phraseFlag,
+} from '../../src/cli/args.js';
 import { ValidationError } from '../../src/errors.js';
 
 const known = {
@@ -130,5 +136,29 @@ describe('flagIsSet', () => {
 
   it('is false for one that was not given', () => {
     expect(flagIsSet(parseArgs([], { known }), 'quiet')).toBe(false);
+  });
+});
+
+describe('phraseFlag', () => {
+  it('joins the flag value with the words that followed it', () => {
+    const parsed = parseArgs(['show', '--title', 'Cambridge', 'Surprise', 'Major']);
+    expect(phraseFlag(parsed, 'title')).toBe('Cambridge Surprise Major');
+  });
+
+  it('takes a value that was properly quoted', () => {
+    expect(phraseFlag(parseArgs(['--title', 'Plain Bob Major']), 'title')).toBe('Plain Bob Major');
+  });
+
+  it('takes the leftovers alone when the flag is missing', () => {
+    const parsed = { command: [], flags: {}, rest: ['Plain', 'Bob', 'Major'] };
+    expect(phraseFlag(parsed, 'title')).toBe('Plain Bob Major');
+  });
+
+  it('falls back when there is nothing at all', () => {
+    expect(phraseFlag(parseArgs([]), 'title', 'Unnamed')).toBe('Unnamed');
+  });
+
+  it('complains when there is nothing and no fallback', () => {
+    expect(() => phraseFlag(parseArgs([]), 'title')).toThrow('this command needs --title');
   });
 });
