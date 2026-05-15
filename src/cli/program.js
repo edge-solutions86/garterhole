@@ -8,6 +8,7 @@ import {
   METHOD_FLAGS,
 } from './commands/method.js';
 import { prove, printLead, PROVE_FLAGS } from './commands/prove.js';
+import { addTower, listTowers, showTower, TOWER_FLAGS } from './commands/tower.js';
 import {
   fileRecord,
   listRecords,
@@ -47,6 +48,14 @@ const COMMANDS = Object.freeze([
     flags: METHOD_FLAGS,
     run: removeMethod,
   },
+  {
+    name: 'tower add',
+    help: 'add a tower from its name and its bell weights',
+    flags: TOWER_FLAGS,
+    run: addTower,
+  },
+  { name: 'tower list', help: 'list the towers', flags: TOWER_FLAGS, run: listTowers },
+  { name: 'tower show', help: 'describe one tower', flags: TOWER_FLAGS, run: showTower },
   {
     name: 'prove',
     help: 'ring a touch and say whether it is true',
