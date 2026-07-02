@@ -17,6 +17,7 @@ import { addHealthRoutes } from '../src/http/routes/health.js';
 import { addMethodRoutes } from '../src/http/routes/methods.js';
 import { addTowerRoutes } from '../src/http/routes/towers.js';
 import { addPerformanceRoutes } from '../src/http/routes/performances.js';
+import { addStrikingRoutes } from '../src/http/routes/striking.js';
 import { commandNames } from '../src/cli/program.js';
 import { settingsList } from '../src/config/config.js';
 import { buildLabel } from '../src/version.js';
@@ -34,6 +35,7 @@ export function everyRoute() {
   addMethodRoutes(router);
   addTowerRoutes(router);
   addPerformanceRoutes(router);
+  addStrikingRoutes(router);
   return router.list();
 }
 

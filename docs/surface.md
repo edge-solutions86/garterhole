@@ -25,6 +25,10 @@ Written by `npm run surface` from the code itself, for garterhole/0.1.0.
 | POST | `/performances/check` |
 | GET | `/report` |
 | GET | `/statistics` |
+| POST | `/striking` |
+| POST | `/striking/report` |
+| POST | `/striking/blows.csv` |
+| POST | `/striking/bells.csv` |
 
 ## Commands
 

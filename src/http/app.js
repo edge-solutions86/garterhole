@@ -4,6 +4,7 @@ import { addHealthRoutes } from './routes/health.js';
 import { addMethodRoutes } from './routes/methods.js';
 import { addTowerRoutes } from './routes/towers.js';
 import { addPerformanceRoutes } from './routes/performances.js';
+import { addStrikingRoutes } from './routes/striking.js';
 import { Service } from '../service.js';
 import { Repository } from '../store/repository.js';
 import { Journal } from '../store/journal.js';
@@ -32,6 +33,7 @@ const ROUTE_GROUPS = Object.freeze([
   ['methods', addMethodRoutes],
   ['towers', addTowerRoutes],
   ['performances', addPerformanceRoutes],
+  ['striking', addStrikingRoutes],
 ]);
 
 /**

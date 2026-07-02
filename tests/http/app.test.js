@@ -43,13 +43,14 @@ describe('building the application', () => {
       expect(patterns).toContain('/methods');
       expect(patterns).toContain('/towers');
       expect(patterns).toContain('/performances');
+      expect(patterns).toContain('/striking');
     } finally {
       app.close();
     }
   });
 
   it('names the groups it registers', () => {
-    expect(routeGroups()).toEqual(['health', 'methods', 'towers', 'performances']);
+    expect(routeGroups()).toEqual(['health', 'methods', 'towers', 'performances', 'striking']);
   });
 
   it('takes the lock while it is running', () => {
