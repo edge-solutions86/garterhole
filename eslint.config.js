@@ -32,6 +32,12 @@ export default [
   },
   {
     files: ['scripts/**/*.mjs', 'bin/**/*.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        fetch: 'readonly',
+      },
+    },
     rules: {
       'no-console': 'off',
     },

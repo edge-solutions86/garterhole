@@ -23,7 +23,8 @@
     "coverage": "vitest run --coverage",
     "surface": "node scripts/routes.mjs",
     "surface:check": "node scripts/routes.mjs --check",
-    "bench": "node scripts/bench.mjs"
+    "bench": "node scripts/bench.mjs",
+    "smoke": "node scripts/smoke.mjs"
   },
   "devDependencies": {
     "@eslint/js": "9.19.0",

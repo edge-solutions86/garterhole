@@ -11,7 +11,9 @@ import process from 'node:process';
 const STAGES = [
   { name: 'lint', command: 'npm', args: ['run', '--silent', 'lint'] },
   { name: 'format', command: 'npm', args: ['run', '--silent', 'format:check'] },
+  { name: 'surface', command: 'npm', args: ['run', '--silent', 'surface:check'] },
   { name: 'test', command: 'npm', args: ['run', '--silent', 'test'] },
+  { name: 'coverage', command: 'npm', args: ['run', '--silent', 'coverage'] },
 ];
 
 /**
