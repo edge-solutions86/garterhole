@@ -36,6 +36,7 @@ Written by `npm run surface` from the code itself, for garterhole/0.1.0.
 - `garterhole method list`
 - `garterhole method show`
 - `garterhole method remove`
+- `garterhole serve`
 - `garterhole tower add`
 - `garterhole tower list`
 - `garterhole tower show`

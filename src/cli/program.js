@@ -16,7 +16,8 @@ import {
   printBoard,
   RECORD_FLAGS,
 } from './commands/records.js';
-import { buildApp, start } from '../http/app.js';
+import { buildApp } from '../http/app.js';
+import { serve, SERVE_FLAGS } from './commands/serve.js';
 import { buildLabel } from '../version.js';
 import { isGarterholeError } from '../errors.js';
 
@@ -47,6 +48,12 @@ const COMMANDS = Object.freeze([
     help: 'take a method out of the library',
     flags: METHOD_FLAGS,
     run: removeMethod,
+  },
+  {
+    name: 'serve',
+    help: 'start the HTTP service',
+    flags: SERVE_FLAGS,
+    run: (parsed, context) => serve(parsed, context),
   },
   {
     name: 'tower add',
@@ -123,8 +130,6 @@ export function helpLines() {
     '',
     ...COMMANDS.map((command) => `  ${command.name.padEnd(width)}  ${command.help}`),
     '',
-    '  serve                 start the HTTP service',
-    '',
     'flags: --json for machine readable output, --quiet to say less',
   ];
 }
@@ -154,11 +159,6 @@ export async function run(argv, options = {}) {
     output.answer(buildLabel());
     return 0;
   }
-  if (argv[0] === 'serve') {
-    const running = await start({ environment: options.environment });
-    output.note(`listening on port ${running.port}`);
-    return 0;
-  }
   const found = findCommand(argv);
   if (found === null) {
     output.problem(`there is no command called ${JSON.stringify(argv.join(' '))}`);
@@ -169,7 +169,11 @@ export async function run(argv, options = {}) {
     const parsed = parseArgs(found.argv, {
       known: { ...GLOBAL_FLAGS, ...found.command.flags },
     });
-    await found.command.run(parsed, { service: app.service, output });
+    await found.command.run(parsed, {
+      service: app.service,
+      output,
+      environment: options.environment,
+    });
     return 0;
   } catch (error) {
     output.problem(isGarterholeError(error) ? error.message : String(error?.message ?? error));
