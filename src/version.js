@@ -3,7 +3,7 @@
  * both the CLI banner and the HTTP health route read the same value without
  * either of them importing the package manifest at run time.
  */
-export const VERSION = '0.1.0';
+export const VERSION = '1.0.0';
 
 /**
  * Name used in log lines, the CLI banner and the HTTP server header.

@@ -1,8 +1,8 @@
 {
   "name": "garterhole",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
-  "description": "Method, composition and band tooling for change ringing towers",
+  "description": "Method, composition, striking and tower tooling for change ringing bands",
   "type": "module",
   "license": "UNLICENSED",
   "engines": {
@@ -24,7 +24,8 @@
     "surface": "node scripts/routes.mjs",
     "surface:check": "node scripts/routes.mjs --check",
     "bench": "node scripts/bench.mjs",
-    "smoke": "node scripts/smoke.mjs"
+    "smoke": "node scripts/smoke.mjs",
+    "release:check": "node scripts/release.mjs"
   },
   "devDependencies": {
     "@eslint/js": "9.19.0",
@@ -36,5 +37,19 @@
   },
   "bin": {
     "garterhole": "./bin/garterhole.js"
-  }
+  },
+  "keywords": [
+    "change-ringing",
+    "bells",
+    "method",
+    "composition",
+    "striking",
+    "campanology"
+  ],
+  "files": [
+    "src",
+    "bin",
+    "docs",
+    "README.md"
+  ]
 }

@@ -38,6 +38,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run surface:check
+      - run: npm run release:check
 
   test:
     name: test on node ${{ matrix.node }}

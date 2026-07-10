@@ -1,6 +1,6 @@
 # The surface
 
-Written by `npm run surface` from the code itself, for garterhole/0.1.0.
+Written by `npm run surface` from the code itself, for garterhole/1.0.0.
 
 ## HTTP routes
 
