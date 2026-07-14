@@ -1,5 +1,12 @@
-#!/usr/bin/env node
 /**
+ * Run with `node scripts/routes.mjs`.
+ *
+ * There is no shebang here on purpose. These scripts are imported by the tests
+ * as well as run from the command line, and a shebang on a module that gets
+ * imported is read by some loaders as the first line of the program rather than
+ * as a comment. The entry point in `bin/` keeps its shebang, because nothing
+ * imports it.
+ *
  * Write the list of routes and commands out.
  *
  * The documentation of a service's HTTP surface goes stale the day somebody

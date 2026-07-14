@@ -1,5 +1,12 @@
-#!/usr/bin/env node
 /**
+ * Run with `node scripts/bench.mjs`.
+ *
+ * There is no shebang here on purpose. These scripts are imported by the tests
+ * as well as run from the command line, and a shebang on a module that gets
+ * imported is read by some loaders as the first line of the program rather than
+ * as a comment. The entry point in `bin/` keeps its shebang, because nothing
+ * imports it.
+ *
  * How long the slow parts take.
  *
  * Three things in this library are slow enough to matter, and they are slow for

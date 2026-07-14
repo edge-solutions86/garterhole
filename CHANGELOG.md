@@ -24,6 +24,16 @@ The first version anybody else should install.
   compaction, backups and a unit of work.
 - An HTTP surface and a command line surface, both over one service.
 
+### Fixed
+
+- The scripts under `scripts/` no longer carry a shebang. They are imported by
+  the tests as well as run from the command line, and one loader on Linux read
+  the shebang as the first line of the program rather than as a comment. The
+  entry point in `bin/` keeps its shebang, because nothing imports it, and a
+  test now checks both.
+- Every script guards its work behind a check on how it was invoked, so
+  importing one no longer runs it.
+
 ### Notes
 
 - Odd stages count the changing bells only; the cover bell is not part of the
