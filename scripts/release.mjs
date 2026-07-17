@@ -3,8 +3,8 @@
  *
  * There is no shebang here on purpose. These scripts are imported by the tests
  * as well as run from the command line, and a shebang on a module that gets
- * imported is read by some loaders as the first line of the program rather than
- * as a comment. The entry point in `bin/` keeps its shebang, because nothing
+ * imported is read as the first line of the program rather than as a comment
+ * once a checkout has converted the line endings. The entry point in `bin/` keeps its shebang, because nothing
  * imports it.
  *
  * Check that a release says the same thing everywhere.

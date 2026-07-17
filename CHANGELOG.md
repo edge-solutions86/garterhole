@@ -27,10 +27,13 @@ The first version anybody else should install.
 ### Fixed
 
 - The scripts under `scripts/` no longer carry a shebang. They are imported by
-  the tests as well as run from the command line, and one loader on Linux read
-  the shebang as the first line of the program rather than as a comment. The
-  entry point in `bin/` keeps its shebang, because nothing imports it, and a
-  test now checks both.
+  the tests as well as run from the command line, and on a Windows checkout,
+  where git converts the line endings, the loader read the shebang as the first
+  line of the program rather than as a comment. The entry point in `bin/` keeps
+  its shebang, because nothing imports it, and a test now checks both.
+- Line endings are pinned to unix in `.gitattributes`, so a checkout is the same
+  on every platform. The line ending difference is what turned a shebang from a
+  comment into a syntax error, and it would have found something else next.
 - Every script guards its work behind a check on how it was invoked, so
   importing one no longer runs it.
 

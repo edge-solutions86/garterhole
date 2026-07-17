@@ -3,8 +3,8 @@
  *
  * There is no shebang here on purpose. These scripts are imported by the tests
  * as well as run from the command line, and a shebang on a module that gets
- * imported is read by some loaders as the first line of the program rather than
- * as a comment. The entry point in `bin/` keeps its shebang, because nothing
+ * imported is read as the first line of the program rather than as a comment
+ * once a checkout has converted the line endings. The entry point in `bin/` keeps its shebang, because nothing
  * imports it.
  *
  * Write the list of routes and commands out.
@@ -78,21 +78,43 @@ export function document() {
   return lines.join('\n');
 }
 
-const wanted = document();
-const checking = process.argv.includes('--check');
-
-if (checking) {
+/**
+ * Compare what is on disk against what the code says it should be.
+ *
+ * @returns {boolean} true when the file is already right
+ */
+export function upToDate() {
   const found = existsSync(OUTPUT) ? readFileSync(OUTPUT, 'utf8') : '';
-  if (found !== wanted) {
-    process.stderr.write(`${OUTPUT} is out of date, so run npm run surface\n`);
-    process.exit(1);
-  }
-  process.stdout.write(`${OUTPUT} is up to date\n`);
-} else {
+  return found === document();
+}
+
+/**
+ * Write the document out, making the directory if it is not there yet.
+ *
+ * @returns {string} the path written
+ */
+export function write() {
   const directory = dirname(OUTPUT);
   if (!existsSync(directory)) {
     mkdirSync(directory, { recursive: true });
   }
-  writeFileSync(OUTPUT, wanted, 'utf8');
-  process.stdout.write(`wrote ${OUTPUT}\n`);
+  writeFileSync(OUTPUT, document(), 'utf8');
+  return OUTPUT;
+}
+
+/**
+ * Run from the command line. This is guarded, because the tests import this
+ * file, and without the guard importing it rewrote the very file that the
+ * surface check then compared against.
+ */
+if (process.argv[1]?.endsWith('routes.mjs')) {
+  if (process.argv.includes('--check')) {
+    if (!upToDate()) {
+      process.stderr.write(`${OUTPUT} is out of date, so run npm run surface\n`);
+      process.exit(1);
+    }
+    process.stdout.write(`${OUTPUT} is up to date\n`);
+  } else {
+    process.stdout.write(`wrote ${write()}\n`);
+  }
 }
