@@ -77,8 +77,31 @@ tasks.named('jacocoTestCoverageVerification') {
     }
 }
 
+// The repository's own tooling, in io.github.rkaushikdev.garterhole.tools.
+// Each runs from the project directory, because it reads or writes the
+// repository's files.
+def tool = { String name, String group, String description, String mainClassName, List<String> arguments ->
+    tasks.register(name, JavaExec) {
+        it.group = group
+        it.description = description
+        classpath = sourceSets.main.runtimeClasspath
+        mainClass = "io.github.rkaushikdev.garterhole.tools.${mainClassName}"
+        args arguments
+        workingDir = projectDir
+    }
+}
+
+tool('surface', 'documentation', 'Writes docs/surface.md from the routes, the commands and the settings.',
+        'SurfaceDocument', [])
+tool('surfaceCheck', 'verification', 'Fails when docs/surface.md is not what the code would write.',
+        'SurfaceDocument', ['--check'])
+tool('releaseCheck', 'verification', 'Fails when the build file, Version and the changelog disagree on the version.',
+        'ReleaseCheck', [])
+tool('smoke', 'verification', 'Starts the service on a free port and asks it a few questions.', 'Smoke', [])
+tool('bench', 'verification', 'Times the slow parts: proving, falseness and the touch search.', 'Bench', [])
+
 tasks.named('check') {
-    dependsOn 'jacocoTestCoverageVerification'
+    dependsOn 'jacocoTestCoverageVerification', 'surfaceCheck', 'releaseCheck'
 }
 
 spotless {

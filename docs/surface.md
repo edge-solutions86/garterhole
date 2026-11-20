@@ -1,6 +1,6 @@
 # The surface
 
-Written by `npm run surface` from the code itself, for garterhole/1.0.0.
+Written by `./gradlew surface` from the code itself, for garterhole/1.0.0.
 
 ## HTTP routes
 
@@ -46,7 +46,6 @@ Written by `npm run surface` from the code itself, for garterhole/1.0.0.
 - `garterhole records list`
 - `garterhole records report`
 - `garterhole records board`
-- `garterhole serve`
 
 ## Settings
 
