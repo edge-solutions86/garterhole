@@ -1,5 +1,10 @@
 # garterhole
 
+[![CI](https://github.com/rkaushik-dev/garterhole/actions/workflows/ci.yml/badge.svg)](https://github.com/rkaushik-dev/garterhole/actions/workflows/ci.yml)
+![Java 21](https://img.shields.io/badge/Java-21-007396)
+![Gradle](https://img.shields.io/badge/build-Gradle-02303A)
+![JUnit 5](https://img.shields.io/badge/tests-JUnit%205-25A162)
+
 Tooling for change ringing bands: method construction, composition proving,
 striking analysis, and the tower admin that surrounds them.
 
