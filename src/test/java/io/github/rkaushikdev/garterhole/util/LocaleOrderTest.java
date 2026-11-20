@@ -1,4 +1,4 @@
-package io.github.rkaushikdev.garterhole.store;
+package io.github.rkaushikdev.garterhole.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

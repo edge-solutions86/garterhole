@@ -1,4 +1,4 @@
-package io.github.rkaushikdev.garterhole.store;
+package io.github.rkaushikdev.garterhole.util;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -20,10 +20,10 @@ import java.util.List;
  * <p>Strings that differ only in characters the collation ignores compare
  * equal, as they did in the original, so a stable sort keeps their order.
  */
-final class LocaleOrder {
+public final class LocaleOrder {
 
     /** The comparator. */
-    static final Comparator<String> ORDER = LocaleOrder::compare;
+    public static final Comparator<String> ORDER = LocaleOrder::compare;
 
     /** Punctuation and symbols in the order the root collation puts them. */
     private static final String PUNCTUATION = "_-,;:!?.'\"()[]{}@*/\\&#%`^+<=>|~$";
@@ -42,7 +42,7 @@ final class LocaleOrder {
      * @param right another
      * @return negative, zero or positive, the way {@link Comparator#compare} does
      */
-    static int compare(String left, String right) {
+    public static int compare(String left, String right) {
         Keys a = keysOf(left);
         Keys b = keysOf(right);
         int primary = compareSequences(a.primary(), b.primary());

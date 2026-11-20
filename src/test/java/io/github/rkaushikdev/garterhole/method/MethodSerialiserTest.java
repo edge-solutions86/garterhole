@@ -1,10 +1,10 @@
 package io.github.rkaushikdev.garterhole.method;
 
-import static io.github.rkaushikdev.garterhole.method.Serialise.FORMAT_VERSION;
-import static io.github.rkaushikdev.garterhole.method.Serialise.libraryFromJson;
-import static io.github.rkaushikdev.garterhole.method.Serialise.libraryToJson;
-import static io.github.rkaushikdev.garterhole.method.Serialise.methodFromJson;
-import static io.github.rkaushikdev.garterhole.method.Serialise.methodToJson;
+import static io.github.rkaushikdev.garterhole.method.MethodSerialiser.FORMAT_VERSION;
+import static io.github.rkaushikdev.garterhole.method.MethodSerialiser.libraryFromJson;
+import static io.github.rkaushikdev.garterhole.method.MethodSerialiser.libraryToJson;
+import static io.github.rkaushikdev.garterhole.method.MethodSerialiser.methodFromJson;
+import static io.github.rkaushikdev.garterhole.method.MethodSerialiser.methodToJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -17,7 +17,7 @@ import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class SerialiseTest {
+class MethodSerialiserTest {
 
     private static Method cambridge() {
         return Method.of("Cambridge", 8, "x38x14x1258x36x14x58x16x78,12");

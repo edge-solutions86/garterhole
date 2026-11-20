@@ -2,12 +2,11 @@ package io.github.rkaushikdev.garterhole.method;
 
 import io.github.rkaushikdev.garterhole.core.Row;
 import io.github.rkaushikdev.garterhole.util.CollectionHelpers;
-import java.text.Collator;
+import io.github.rkaushikdev.garterhole.util.LocaleOrder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -75,7 +74,7 @@ public final class Stats {
      * @return the count of each kind of work, keyed by its name, in name order
      */
     public static Map<String, Integer> workCounts(Method method, int bell) {
-        Map<String, Integer> counts = new TreeMap<>(Collator.getInstance(Locale.ROOT));
+        Map<String, Integer> counts = new TreeMap<>(LocaleOrder.ORDER);
         CollectionHelpers.countBy(
                         PathTrace.workOf(method, bell), piece -> piece.kind().toString())
                 .forEach(counts::put);

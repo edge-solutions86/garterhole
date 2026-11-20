@@ -1,8 +1,8 @@
 package io.github.rkaushikdev.garterhole.method;
 
 import io.github.rkaushikdev.garterhole.ValidationException;
+import io.github.rkaushikdev.garterhole.util.LocaleOrder;
 import io.github.rkaushikdev.garterhole.util.Text;
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -185,7 +185,7 @@ public final class LibrarySearch {
      * @return how many methods it holds in each class, in name order
      */
     public static Map<String, Integer> countByClass(MethodLibrary library) {
-        Map<String, Integer> counts = new TreeMap<>(Collator.getInstance(Locale.ROOT));
+        Map<String, Integer> counts = new TreeMap<>(LocaleOrder.ORDER);
         for (Method method : library) {
             counts.merge(Classifier.classify(method).className(), 1, Integer::sum);
         }

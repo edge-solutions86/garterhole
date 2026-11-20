@@ -18,7 +18,7 @@ import java.util.Map;
  * the derived fields are ignored and everything is worked out again, so a file
  * written by something that got the class wrong still loads correctly.
  */
-public final class Serialise {
+public final class MethodSerialiser {
 
     /** The version stamped into every library document, so that a reader can refuse a future one. */
     public static final int FORMAT_VERSION = 1;
@@ -26,7 +26,7 @@ public final class Serialise {
     /** The format name stamped into every library document. */
     public static final String FORMAT = "garterhole.methods";
 
-    private Serialise() {}
+    private MethodSerialiser() {}
 
     /**
      * @param method a method

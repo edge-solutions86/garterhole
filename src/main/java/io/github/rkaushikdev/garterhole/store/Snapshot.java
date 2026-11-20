@@ -103,14 +103,14 @@ public final class Snapshot {
         if (through < 0) {
             throw new ValidationException(through + " is not a number of records");
         }
-        String body = StoreJson.write(state)
-                .orElseThrow(() -> new ValidationException("this state cannot be written as JSON"));
+        String body =
+                Json.write(state).orElseThrow(() -> new ValidationException("this state cannot be written as JSON"));
         ObjectNode document = Json.object();
         document.put("version", SNAPSHOT_VERSION);
         document.put("through", through);
         document.put("checksum", Codec.checksum(body));
         document.set("state", state);
-        String text = StoreJson.write(document).orElseThrow();
+        String text = Json.write(document).orElseThrow();
         StoreFiles.ensureParent(path);
         Path temporary = Path.of(path + ".writing");
         try {
@@ -134,7 +134,7 @@ public final class Snapshot {
         }
         JsonNode document;
         try {
-            document = StoreJson.read(Files.readString(path, StandardCharsets.UTF_8));
+            document = Json.parse(Files.readString(path, StandardCharsets.UTF_8));
         } catch (IOException | IllegalArgumentException failure) {
             throw new StorageException("the snapshot at " + path + " cannot be read: " + failure.getMessage(), failure);
         }
@@ -144,11 +144,11 @@ public final class Snapshot {
         JsonNode version = document.path("version");
         if (!version.isNumber() || version.doubleValue() != SNAPSHOT_VERSION) {
             Map<String, Object> details = new LinkedHashMap<>();
-            details.put("found", StoreJson.isUndefined(version) ? null : version);
+            details.put("found", Json.isUndefined(version) ? null : version);
             details.put("expected", SNAPSHOT_VERSION);
             throw new StorageException(
-                    "the snapshot at " + path + " is version " + StoreJson.templateText(version)
-                            + " and this reads version " + SNAPSHOT_VERSION,
+                    "the snapshot at " + path + " is version " + Json.templateText(version) + " and this reads version "
+                            + SNAPSHOT_VERSION,
                     details,
                     null);
         }
@@ -157,7 +157,7 @@ public final class Snapshot {
             throw new StorageException("the snapshot at " + path + " does not say how far it goes");
         }
         JsonNode state = document.path("state");
-        String found = StoreJson.write(state).map(Codec::checksum).orElse(null);
+        String found = Json.write(state).map(Codec::checksum).orElse(null);
         String wanted = document.path("checksum").textValue();
         if (found == null || !found.equals(wanted)) {
             Map<String, Object> details = new LinkedHashMap<>();

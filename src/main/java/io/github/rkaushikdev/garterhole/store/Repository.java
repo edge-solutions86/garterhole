@@ -7,6 +7,7 @@ import io.github.rkaushikdev.garterhole.StorageException;
 import io.github.rkaushikdev.garterhole.ValidationException;
 import io.github.rkaushikdev.garterhole.util.Guards;
 import io.github.rkaushikdev.garterhole.util.Json;
+import io.github.rkaushikdev.garterhole.util.LocaleOrder;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -145,7 +146,7 @@ public final class Repository {
     public Repository put(String collection, String id, JsonNode document) {
         Guards.nonEmptyString(collection, "a collection name");
         Guards.nonEmptyString(id, "a document id");
-        if (StoreJson.isUndefined(document)) {
+        if (Json.isUndefined(document)) {
             throw new ValidationException("there is no document to file");
         }
         applyBatch(List.of(putRecord(collection, id, document)));
@@ -229,7 +230,7 @@ public final class Repository {
     public Optional<JsonNode> find(String collection, String id) {
         Map<String, JsonNode> held = collections.get(collection);
         JsonNode found = held == null ? null : held.get(id);
-        return StoreJson.isUndefined(found) ? Optional.empty() : Optional.of(found);
+        return Json.isUndefined(found) ? Optional.empty() : Optional.of(found);
     }
 
     /**
@@ -336,11 +337,9 @@ public final class Repository {
         if (!op.isTextual() || !(PUT.equals(op.textValue()) || DELETE.equals(op.textValue()))) {
             Map<String, Object> details = new LinkedHashMap<>();
             details.put("index", index);
-            details.put("op", StoreJson.isUndefined(op) ? null : op);
+            details.put("op", Json.isUndefined(op) ? null : op);
             throw new StorageException(
-                    "record " + index + " has an operation this cannot apply: " + StoreJson.templateText(op),
-                    details,
-                    null);
+                    "record " + index + " has an operation this cannot apply: " + Json.templateText(op), details, null);
         }
     }
 

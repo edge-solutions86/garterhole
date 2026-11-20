@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.github.rkaushikdev.garterhole.ValidationException;
 import io.github.rkaushikdev.garterhole.util.Guards;
 import io.github.rkaushikdev.garterhole.util.Json;
+import io.github.rkaushikdev.garterhole.util.LocaleOrder;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -161,7 +162,7 @@ public final class Index {
     /** A key as the text it is filed under, the way {@code String(key)} writes it. */
     private static String keyText(Object key) {
         if (key instanceof JsonNode node) {
-            return StoreJson.templateText(node);
+            return Json.templateText(node);
         }
         if (key instanceof Double || key instanceof Float) {
             return Json.number(((Number) key).doubleValue());

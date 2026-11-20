@@ -3,6 +3,7 @@ package io.github.rkaushikdev.garterhole.store;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.rkaushikdev.garterhole.StorageException;
 import io.github.rkaushikdev.garterhole.ValidationException;
+import io.github.rkaushikdev.garterhole.util.Json;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -70,7 +71,7 @@ public final class Codec {
         }
         String payload;
         try {
-            payload = StoreJson.write(record)
+            payload = Json.write(record)
                     .orElseThrow(() -> new ValidationException("this record cannot be written as JSON"));
         } catch (IllegalArgumentException failure) {
             throw new ValidationException("this record cannot be written as JSON: " + failure.getMessage());
@@ -121,7 +122,7 @@ public final class Codec {
                     "line " + lineNumber + " is damaged: checksum " + found + " should be " + wanted, details, null);
         }
         try {
-            return StoreJson.read(payload);
+            return Json.parse(payload);
         } catch (IllegalArgumentException failure) {
             throw new StorageException(
                     "line " + lineNumber + " is not JSON: " + failure.getMessage(),

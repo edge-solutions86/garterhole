@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.github.rkaushikdev.garterhole.ConflictException;
 import io.github.rkaushikdev.garterhole.StorageException;
 import io.github.rkaushikdev.garterhole.ValidationException;
+import io.github.rkaushikdev.garterhole.util.Json;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileAlreadyExistsException;
@@ -141,7 +142,7 @@ public final class Lock {
             return Optional.empty();
         }
         try {
-            JsonNode parsed = StoreJson.read(Files.readString(path, StandardCharsets.UTF_8));
+            JsonNode parsed = Json.parse(Files.readString(path, StandardCharsets.UTF_8));
             JsonNode pidNode = parsed.path("pid");
             JsonNode takenNode = parsed.path("taken");
             if (!isWholeNumber(pidNode) || !isWholeNumber(takenNode)) {

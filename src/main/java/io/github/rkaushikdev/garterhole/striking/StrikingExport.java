@@ -103,27 +103,27 @@ public final class StrikingExport {
         document.put("stage", session.stream().stage());
         document.put("rows", session.rowCount());
         ObjectNode model = document.putObject("model");
-        putNumber(model, "interval", round(session.model().interval()));
-        putNumber(model, "handstrokeGap", round(session.model().handstrokeGap()));
-        putNumber(model, "pealMinutes", round(session.model().pealMinutes()));
+        Json.putNumber(model, "interval", round(session.model().interval()));
+        Json.putNumber(model, "handstrokeGap", round(session.model().handstrokeGap()));
+        Json.putNumber(model, "pealMinutes", round(session.model().pealMinutes()));
         ObjectNode accuracy = document.putObject("accuracy");
         accuracy.put("blows", summary.blows());
-        putNumber(accuracy, "rms", round(summary.rms()));
-        putNumber(accuracy, "meanError", round(summary.meanError()));
+        Json.putNumber(accuracy, "rms", round(summary.rms()));
+        Json.putNumber(accuracy, "meanError", round(summary.meanError()));
         ArrayNode bells = document.putArray("bells");
         for (Map.Entry<Integer, Summary> entry : session.byBell().entrySet()) {
             ObjectNode bell = bells.addObject();
             bell.put("bell", entry.getKey());
             bell.put("blows", entry.getValue().blows());
-            putNumber(bell, "rms", round(entry.getValue().rms()));
-            putNumber(bell, "meanError", round(entry.getValue().meanError()));
+            Json.putNumber(bell, "rms", round(entry.getValue().rms()));
+            Json.putNumber(bell, "meanError", round(entry.getValue().meanError()));
         }
         ArrayNode windows = document.putArray("windows");
         for (Window window : RollingWindows.rollingAccuracy(session.errors(), windowRows)) {
             ObjectNode written = windows.addObject();
             written.put("from", window.from());
             written.put("to", window.to());
-            putNumber(written, "rms", round(window.rms()));
+            Json.putNumber(written, "rms", round(window.rms()));
         }
         ArrayNode faults = document.putArray("faults");
         session.faults().forEach(fault -> faults.add(Faults.describeFault(fault)));
@@ -159,19 +159,6 @@ public final class StrikingExport {
     /** Rounded to a tenth, with halves going up, the way the reports round. */
     private static double round(double value) {
         return Math.round(value * 10) / 10.0;
-    }
-
-    /**
-     * Puts a number the way a JavaScript runtime would write it: a whole number
-     * goes in as a whole number, so that it is written {@code 250} rather than
-     * {@code 250.0}.
-     */
-    private static void putNumber(ObjectNode node, String name, double value) {
-        if (Double.isFinite(value) && value == Math.rint(value) && Math.abs(value) < Long.MAX_VALUE) {
-            node.put(name, (long) value);
-        } else {
-            node.put(name, value);
-        }
     }
 
     private static String csv(Object... cells) {

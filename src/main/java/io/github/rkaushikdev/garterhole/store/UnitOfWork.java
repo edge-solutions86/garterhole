@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.rkaushikdev.garterhole.ValidationException;
 import io.github.rkaushikdev.garterhole.util.Guards;
+import io.github.rkaushikdev.garterhole.util.Json;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -89,7 +90,7 @@ public final class UnitOfWork {
         requireOpen();
         Guards.nonEmptyString(collection, "a collection name");
         Guards.nonEmptyString(id, "a document id");
-        if (StoreJson.isUndefined(document)) {
+        if (Json.isUndefined(document)) {
             throw new ValidationException("there is no document to file");
         }
         changes.add(Repository.putRecord(collection, id, document));
