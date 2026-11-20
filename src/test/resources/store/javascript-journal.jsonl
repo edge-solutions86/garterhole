@@ -1,0 +1,5 @@
+a13042c0 {"op":"put","collection":"methods","id":"Plain Bob Minor","document":{"title":"Plain Bob Minor","name":"Plain","stage":6,"notation":"x16x16x16,12","class":"Bob","leadLength":12,"leadHead":"135264","huntBells":[1]}}
+0714fa5d {"op":"put","collection":"towers","id":"bridgend-st-mary","document":{"name":"St Mary the Virgin","place":"Bridgend","bells":[{"number":1,"weight":"4-0-0"},{"number":2,"weight":"4-2-7"}],"note":"rung by Côté 🔔"}}
+414258e7 {"op":"put","collection":"performances","id":"st-mary-2025-05-18-plain-bob-minor","document":{"tower":"St Mary","date":"2025-05-18","title":"Plain Bob Minor","changes":1260,"band":["Alice","Bob","Carol","Dan","Erin","Frank"],"conductor":"Alice","composer":null,"kind":"quarter peal"}}
+76cc14be {"op":"delete","collection":"towers","id":"bridgend-st-mary"}
+a3034488 {"op":"put","collection":"towers","id":"bridgend-st-mary","document":{"name":"St Mary","place":"Bridgend","bells":[{"number":1,"weight":"4-0-0"},{"number":2,"weight":"4-2-7"}],"ringingRoom":"up 42 steps","rate":0.5}}
