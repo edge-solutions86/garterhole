@@ -77,6 +77,13 @@ class RowParseTest {
         }
 
         @Test
+        void readsRowsSeparatedByTheSpacesJavaScriptCountsAsSpace() {
+            assertThat(parseRows("\u00A01234\u20032143\uFEFF"))
+                    .extracting(Row::toString)
+                    .containsExactly("1234", "2143");
+        }
+
+        @Test
         void givesAnEmptyListForBlankInput() {
             assertThat(parseRows("")).isEmpty();
             assertThat(parseRows("   \n ")).isEmpty();

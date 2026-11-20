@@ -4,11 +4,11 @@ import io.github.rkaushikdev.garterhole.ValidationException;
 import io.github.rkaushikdev.garterhole.core.Row;
 import io.github.rkaushikdev.garterhole.core.Stage;
 import io.github.rkaushikdev.garterhole.util.Json;
+import io.github.rkaushikdev.garterhole.validation.Coerce;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * Calling positions. A conductor says "wrong" rather than "a bob at the end of
@@ -37,8 +37,6 @@ public final class CallingPosition {
             "H", "Home");
 
     /** A place written as a number, the way an unnamed position is written. */
-    private static final Pattern NUMBER = Pattern.compile("\\s*\\d+(\\.0*)?\\s*");
-
     private CallingPosition() {}
 
     /**
@@ -119,9 +117,9 @@ public final class CallingPosition {
         if (place != null) {
             return place;
         }
-        if (code != null && NUMBER.matcher(code).matches()) {
-            double number = Double.parseDouble(code.strip());
-            if (number >= 1 && number <= stage) {
+        if (code != null) {
+            double number = Coerce.readNumber(code);
+            if (number == Math.rint(number) && number >= 1 && number <= stage) {
                 return (int) number;
             }
         }

@@ -203,11 +203,13 @@ public final class Schemas {
         private final Integer min;
         private final Integer max;
         private final Pattern pattern;
+        private final Pattern endAnchored;
 
         private StringSchema(Integer min, Integer max, Pattern pattern) {
             this.min = min;
             this.max = max;
             this.pattern = pattern;
+            this.endAnchored = pattern == null ? null : endAnchored(pattern);
         }
 
         /**
@@ -246,11 +248,49 @@ public final class Schemas {
             if (max != null && text.length() > max) {
                 return Problem.at(path, "must be at most " + max + " characters");
             }
-            if (pattern != null && !pattern.matcher(text).find()) {
+            if (pattern != null && !endAnchored.matcher(text).find()) {
                 return Problem.at(path, "must match /" + pattern.pattern() + "/");
             }
             return List.of();
         }
+    }
+
+    /**
+     * The pattern as a JavaScript regular expression reads it. Without the
+     * multiline flag a JavaScript {@code $} matches only at the very end of the
+     * text, where Java's also matches just before a final line break, so
+     * {@code "2025-05-18\n"} would pass a date pattern here and fail there.
+     * Every bare {@code $} becomes {@code \z}; one that is escaped or inside a
+     * character class is left alone.
+     *
+     * @param pattern the pattern, written as its JavaScript source
+     * @return the same pattern anchored the JavaScript way
+     */
+    static Pattern endAnchored(Pattern pattern) {
+        if ((pattern.flags() & Pattern.MULTILINE) != 0) {
+            return pattern;
+        }
+        String source = pattern.pattern();
+        StringBuilder anchored = new StringBuilder(source.length() + 4);
+        boolean inClass = false;
+        for (int index = 0; index < source.length(); index += 1) {
+            char character = source.charAt(index);
+            if (character == '\\' && index + 1 < source.length()) {
+                anchored.append(character).append(source.charAt(index + 1));
+                index += 1;
+            } else if (inClass) {
+                inClass = character != ']';
+                anchored.append(character);
+            } else if (character == '[') {
+                inClass = true;
+                anchored.append(character);
+            } else if (character == '$') {
+                anchored.append("\\z");
+            } else {
+                anchored.append(character);
+            }
+        }
+        return Pattern.compile(anchored.toString(), pattern.flags());
     }
 
     /** A finite number, optionally whole and optionally bounded. */

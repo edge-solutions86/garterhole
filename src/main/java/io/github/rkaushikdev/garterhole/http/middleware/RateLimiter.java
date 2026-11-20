@@ -5,6 +5,7 @@ import io.github.rkaushikdev.garterhole.http.Handler;
 import io.github.rkaushikdev.garterhole.http.Request;
 import io.github.rkaushikdev.garterhole.http.Response;
 import io.github.rkaushikdev.garterhole.util.Clock;
+import io.github.rkaushikdev.garterhole.util.Text;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -141,7 +142,7 @@ public final class RateLimiter {
     public static String callerOf(Request request) {
         String forwarded = request.header("x-forwarded-for").orElse("");
         if (!forwarded.isEmpty()) {
-            return forwarded.split(",", -1)[0].strip();
+            return Text.trim(forwarded.split(",", -1)[0]);
         }
         return request.header("x-caller").orElse("anonymous");
     }

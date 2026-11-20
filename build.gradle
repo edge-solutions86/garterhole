@@ -37,7 +37,8 @@ application {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-    options.compilerArgs << '-Xlint:all'
+    // picocli-codegen leaves annotations it does not claim, which -Xlint:processing reports.
+    options.compilerArgs << '-Xlint:all' << '-Xlint:-processing'
 }
 
 tasks.named('compileJava') {

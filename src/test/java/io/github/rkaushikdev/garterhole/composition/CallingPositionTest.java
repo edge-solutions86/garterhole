@@ -114,6 +114,13 @@ class CallingPositionTest {
         }
 
         @Test
+        void readsAPlaceTheWayJavaScriptReadsANumber() {
+            assertThat(placeForPosition(8, "0x3")).isEqualTo(3);
+            assertThat(placeForPosition(8, " 6\u00A0")).isEqualTo(6);
+            assertThatThrownBy(() -> placeForPosition(8, "6.5")).hasMessageContaining("is not a calling position on 8");
+        }
+
+        @Test
         void refusesACodeThatIsNotAPosition() {
             assertThatThrownBy(() -> placeForPosition(8, "Z")).hasMessageContaining("is not a calling position on 8");
             assertThatThrownBy(() -> placeForPosition(8, "9")).isInstanceOf(ValidationException.class);

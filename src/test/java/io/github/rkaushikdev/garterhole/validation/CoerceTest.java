@@ -195,4 +195,26 @@ class CoerceTest {
             assertThatThrownBy(() -> Coerce.convert(null, conversions)).hasMessageContaining("nothing to convert");
         }
     }
+
+    /** Reading text the way JavaScript's {@code Number(text)} does. */
+    @Nested
+    class ReadNumber {
+
+        @Test
+        void readsWhatJavaScriptReads() {
+            assertThat(Coerce.readNumber("")).isZero();
+            assertThat(Coerce.readNumber(" \u00A012\uFEFF ")).isEqualTo(12);
+            assertThat(Coerce.readNumber("1e3")).isEqualTo(1000);
+            assertThat(Coerce.readNumber("0x10")).isEqualTo(16);
+            assertThat(Coerce.readNumber(".5")).isEqualTo(0.5);
+            assertThat(Coerce.readNumber("-Infinity")).isEqualTo(Double.NEGATIVE_INFINITY);
+        }
+
+        @Test
+        void givesNaNForWhatJavaScriptRefuses() {
+            for (String text : List.of("12abc", "--1", "0x", "1,000", "12d", "NaN", "infinity")) {
+                assertThat(Coerce.readNumber(text)).as(text).isNaN();
+            }
+        }
+    }
 }

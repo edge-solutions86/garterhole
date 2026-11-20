@@ -6,6 +6,7 @@ import io.github.rkaushikdev.garterhole.method.Method;
 import io.github.rkaushikdev.garterhole.notation.NotationFormat;
 import io.github.rkaushikdev.garterhole.notation.NotationParser;
 import io.github.rkaushikdev.garterhole.util.Guards;
+import io.github.rkaushikdev.garterhole.util.Text;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalInt;
@@ -83,8 +84,8 @@ public final class Call {
         if (replacedCount < 1) {
             throw new ValidationException("a call cannot replace " + replacedCount + " changes");
         }
-        this.name = definition.name().strip();
-        this.symbol = definition.symbol().strip();
+        this.name = Text.trim(definition.name());
+        this.symbol = Text.trim(definition.symbol());
         this.stage = definition.stage();
         this.changes = List.copyOf(parsed);
         this.replaces = replacedCount;

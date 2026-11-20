@@ -1,6 +1,7 @@
 package io.github.rkaushikdev.garterhole.core;
 
 import io.github.rkaushikdev.garterhole.util.Json;
+import io.github.rkaushikdev.garterhole.util.Text;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -79,7 +80,7 @@ public final class Stage {
      * @throws IllegalArgumentException when no stage has that name
      */
     public static int fromName(String name) {
-        String wanted = String.valueOf(name).strip().toLowerCase(Locale.ROOT);
+        String wanted = Text.trim(String.valueOf(name)).toLowerCase(Locale.ROOT);
         for (int stage : supported()) {
             if (NAMES.get(stage).toLowerCase(Locale.ROOT).equals(wanted)) {
                 return stage;

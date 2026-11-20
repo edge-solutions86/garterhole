@@ -4,6 +4,7 @@ import io.github.rkaushikdev.garterhole.GarterholeException;
 import io.github.rkaushikdev.garterhole.NotationException;
 import io.github.rkaushikdev.garterhole.util.Guards;
 import io.github.rkaushikdev.garterhole.util.Json;
+import io.github.rkaushikdev.garterhole.util.Text;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.regex.Pattern;
  */
 public final class RowParse {
 
-    private static final Pattern SEPARATOR = Pattern.compile("[\\s,;]+");
+    private static final Pattern SEPARATOR = Pattern.compile("[" + Text.WHITESPACE_CHARACTERS + ",;]+");
 
     private RowParse() {}
 
@@ -110,7 +111,7 @@ public final class RowParse {
 
     private static Row read(String text, Integer stage) {
         Guards.nonEmptyString(text, "a row");
-        String trimmed = text.strip();
+        String trimmed = Text.trim(text);
         if (trimmed.isEmpty()) {
             throw new NotationException("a row must not be blank", text, null);
         }

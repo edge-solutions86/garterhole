@@ -142,6 +142,11 @@ class TypesTest {
         }
 
         @Test
+        void refusesALineBreakAfterTheDate() {
+            assertThat(messages(isoDate(), "2025-05-18\n")).containsExactly("must be a date like 2025-05-18");
+        }
+
+        @Test
         void refusesADayThatDoesNotExist() {
             assertThat(messages(isoDate(), "2025-02-30")).containsExactly("is not a real date");
             assertThat(messages(isoDate(), "2025-13-01")).containsExactly("is not a real date");

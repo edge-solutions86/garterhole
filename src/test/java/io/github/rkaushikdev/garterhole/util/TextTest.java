@@ -182,4 +182,28 @@ class TextTest {
             assertThatThrownBy(() -> Text.wrap("abc", 0)).isInstanceOf(IllegalArgumentException.class);
         }
     }
+
+    /** JavaScript's idea of white space, which is wider than Java's {@code strip()}. */
+    @Nested
+    class JavaScriptWhitespace {
+
+        @Test
+        void trimsTheSpacesJavaScriptTrims() {
+            assertThat(Text.trim("\u00A0\uFEFF Cambridge\u3000\u2009")).isEqualTo("Cambridge");
+            assertThat(Text.trimEnd(" a\u00A0")).isEqualTo(" a");
+        }
+
+        @Test
+        void leavesAloneWhatJavaScriptLeavesAlone() {
+            assertThat(Text.trim("\u200Ba\u200B")).isEqualTo("\u200Ba\u200B");
+            assertThat(Text.isWhitespace('\u200B')).isFalse();
+            assertThat(Text.isWhitespace('x')).isFalse();
+            assertThat(Text.isWhitespace('\u2028')).isTrue();
+        }
+
+        @Test
+        void squashesANoBreakSpaceLikeAnyOther() {
+            assertThat(Text.squash("Plain\u00A0\u00A0Bob ")).isEqualTo("Plain Bob");
+        }
+    }
 }

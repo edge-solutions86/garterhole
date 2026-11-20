@@ -8,6 +8,7 @@ import io.github.rkaushikdev.garterhole.core.Stage;
 import io.github.rkaushikdev.garterhole.notation.Expansion;
 import io.github.rkaushikdev.garterhole.notation.NotationFormat;
 import io.github.rkaushikdev.garterhole.util.Guards;
+import io.github.rkaushikdev.garterhole.util.Text;
 import java.util.List;
 
 /**
@@ -62,7 +63,7 @@ public final class Method {
         if (expanded.isEmpty()) {
             throw new ValidationException("a method needs at least one change");
         }
-        this.name = givenName.strip();
+        this.name = Text.trim(givenName);
         this.stage = definition.stage();
         this.changes = List.copyOf(expanded);
         this.source = notation;

@@ -82,8 +82,8 @@ public final class Tower {
                         + sorted.get(index).number() + ", so it has a gap");
             }
         }
-        this.name = definition.name().strip();
-        this.place = definition.place() == null ? null : definition.place().strip();
+        this.name = Text.trim(definition.name());
+        this.place = definition.place() == null ? null : Text.trim(definition.place());
         this.bells = List.copyOf(sorted);
         this.ringingRoom = definition.ringingRoom();
     }

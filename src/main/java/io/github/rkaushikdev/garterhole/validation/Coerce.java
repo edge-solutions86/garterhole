@@ -2,6 +2,7 @@ package io.github.rkaushikdev.garterhole.validation;
 
 import io.github.rkaushikdev.garterhole.ValidationException;
 import io.github.rkaushikdev.garterhole.util.Json;
+import io.github.rkaushikdev.garterhole.util.Text;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -79,10 +80,10 @@ public final class Coerce {
         if (value instanceof Number number && Double.isFinite(number.doubleValue())) {
             return number.doubleValue();
         }
-        if (!(value instanceof String text) || text.isBlank()) {
+        if (!(value instanceof String text) || Text.trim(text).isEmpty()) {
             throw new ValidationException(what + " must be a number");
         }
-        double parsed = parse(text.strip());
+        double parsed = readNumber(text);
         if (!Double.isFinite(parsed)) {
             throw new ValidationException(what + " must be a number, not " + Json.quote(text));
         }
@@ -132,7 +133,7 @@ public final class Coerce {
             return flag;
         }
         if (value instanceof String text) {
-            String word = text.strip().toLowerCase(Locale.ROOT);
+            String word = Text.trim(text).toLowerCase(Locale.ROOT);
             if (TRUE_WORDS.contains(word)) {
                 return true;
             }
@@ -238,7 +239,32 @@ public final class Coerce {
         return converted;
     }
 
-    private static double parse(String text) {
+    /**
+     * Read text the way JavaScript's {@code Number(text)} reads it: white space
+     * at either end is ignored, nothing at all is nought, a decimal may have a
+     * sign and an exponent, {@code 0x}, {@code 0o} and {@code 0b} introduce hex,
+     * octal and binary, and {@code Infinity} is infinite. Anything else is not a
+     * number.
+     *
+     * @param raw the text
+     * @return the number, or NaN when the text is not one
+     */
+    public static double readNumber(String raw) {
+        String text = Text.trim(raw);
+        if (text.isEmpty()) {
+            return 0;
+        }
+        switch (text) {
+            case "Infinity", "+Infinity" -> {
+                return Double.POSITIVE_INFINITY;
+            }
+            case "-Infinity" -> {
+                return Double.NEGATIVE_INFINITY;
+            }
+            default -> {
+                // Not one of the spelled out numbers; read on below.
+            }
+        }
         if (DECIMAL.matcher(text).matches()) {
             return Double.parseDouble(text);
         }

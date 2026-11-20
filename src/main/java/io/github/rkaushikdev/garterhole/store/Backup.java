@@ -148,7 +148,7 @@ public final class Backup {
         try (Stream<Path> entries = Files.list(directory)) {
             for (Path path : entries.toList()) {
                 String name = path.getFileName().toString();
-                if (name.startsWith(PREFIX) && name.endsWith(SUFFIX)) {
+                if (name.startsWith(PREFIX) && name.endsWith(SUFFIX) && Files.isRegularFile(path)) {
                     found.add(new BackupFile(name, path, Files.size(path)));
                 }
             }

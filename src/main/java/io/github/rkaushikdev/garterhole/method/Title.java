@@ -113,10 +113,10 @@ public final class Title {
         }
         int stage = found.getAsInt();
         String rest =
-                text.substring(0, text.length() - Stage.name(stage).length()).strip();
+                Text.trim(text.substring(0, text.length() - Stage.name(stage).length()));
         String className = trailingClass(rest);
         if (!className.isEmpty()) {
-            rest = rest.substring(0, rest.length() - className.length()).strip();
+            rest = Text.trim(rest.substring(0, rest.length() - className.length()));
         }
         if (rest.isEmpty() && className.isEmpty()) {
             throw new ValidationException(Json.quote(title) + " is nothing but a stage name");
@@ -162,14 +162,14 @@ public final class Title {
 
     private static String withModifiers(String text, String word) {
         String found = word;
-        String head = text.substring(0, text.length() - found.length()).strip();
+        String head = Text.trim(text.substring(0, text.length() - found.length()));
         boolean changed = true;
         while (changed) {
             changed = false;
             for (String modifier : MODIFIERS) {
                 if (head.equals(modifier) || head.endsWith(" " + modifier)) {
                     found = modifier + " " + found;
-                    head = head.substring(0, head.length() - modifier.length()).strip();
+                    head = Text.trim(head.substring(0, head.length() - modifier.length()));
                     changed = true;
                 }
             }

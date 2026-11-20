@@ -1,6 +1,5 @@
 package io.github.rkaushikdev.garterhole.cli;
 
-import io.github.rkaushikdev.garterhole.GarterholeException;
 import io.github.rkaushikdev.garterhole.ValidationException;
 import io.github.rkaushikdev.garterhole.util.Json;
 import io.github.rkaushikdev.garterhole.validation.Coerce;
@@ -228,22 +227,11 @@ public final class Args {
         if (raw.isEmpty()) {
             return Optional.empty();
         }
-        double value = readNumber(raw.get());
+        double value = Coerce.readNumber(raw.get());
         if (value != Math.rint(value) || value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) {
             throw new ValidationException("--" + name + " must be a whole number, not " + Json.quote(raw.get()));
         }
         return Optional.of((int) value);
-    }
-
-    private static double readNumber(String text) {
-        if (text.isBlank()) {
-            return 0;
-        }
-        try {
-            return Coerce.toNumber(text);
-        } catch (GarterholeException notANumber) {
-            return Double.NaN;
-        }
     }
 
     private static ValidationException needs(String name) {

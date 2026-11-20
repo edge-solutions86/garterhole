@@ -247,15 +247,7 @@ public final class Bell {
      * that is not negative.
      */
     private static double wholePart(String part, String weight) {
-        if (part.isBlank()) {
-            return 0;
-        }
-        double value;
-        try {
-            value = Coerce.toNumber(part);
-        } catch (ValidationException notANumber) {
-            value = Double.NaN;
-        }
+        double value = Coerce.readNumber(part);
         if (value != Math.rint(value) || value < 0) {
             throw new ValidationException(Json.quote(weight) + " has a part that is not a whole number");
         }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.MissingNode;
 import io.github.rkaushikdev.garterhole.ValidationException;
 import io.github.rkaushikdev.garterhole.util.Json;
+import io.github.rkaushikdev.garterhole.util.Text;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -205,7 +206,7 @@ public final class Request {
      */
     public boolean sendsJson() {
         String type = header("content-type").orElse("");
-        return type.split(";", -1)[0].strip().equals("application/json");
+        return Text.trim(type.split(";", -1)[0]).equals("application/json");
     }
 
     /**

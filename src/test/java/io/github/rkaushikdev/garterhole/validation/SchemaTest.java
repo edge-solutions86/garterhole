@@ -252,4 +252,24 @@ class SchemaTest {
             assertThat(messages(anything(), node("{\"a\": 1}"))).isEmpty();
         }
     }
+
+    /** A pattern's {@code $} means the end of the text, as it does in JavaScript. */
+    @Nested
+    class PatternsReadTheJavaScriptWay {
+
+        @Test
+        void refusesALineBreakAfterTheEnd() {
+            Schema lowerCase = string().pattern(Pattern.compile("^[a-z]+$"));
+            assertThat(messages(lowerCase, node("\"abc\\n\""))).containsExactly("must match /^[a-z]+$/");
+            assertThat(messages(lowerCase, node("\"abc\""))).isEmpty();
+        }
+
+        @Test
+        void leavesAnEscapedOrBracketedDollarAlone() {
+            Schema price = string().pattern(Pattern.compile("^\\$[0-9$]+$"));
+            assertThat(messages(price, node("\"$5$\""))).isEmpty();
+            assertThat(messages(price, node("\"$5\\n\""))).hasSize(1);
+            assertThat(messages(price, node("\"5\""))).hasSize(1);
+        }
+    }
 }

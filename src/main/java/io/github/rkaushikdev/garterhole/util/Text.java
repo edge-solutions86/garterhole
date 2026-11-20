@@ -15,7 +15,18 @@ import java.util.regex.Pattern;
  */
 public final class Text {
 
-    private static final Pattern WHITESPACE = Pattern.compile("\\s+", Pattern.UNICODE_CHARACTER_CLASS);
+    /**
+     * The characters JavaScript counts as white space in {@code trim()} and in a
+     * regular expression's {@code \\s}: the ASCII spaces and line breaks, every
+     * Unicode space separator, the two Unicode line separators and the byte
+     * order mark. Java's own {@code \\s} and {@code strip()} leave out some of
+     * these, the no-break space among them, so text typed into a form would be
+     * read differently.
+     */
+    public static final String WHITESPACE_CHARACTERS =
+            "\\t\\n\\u000B\\f\\r \\u00A0\\u1680\\u2000-\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000\\uFEFF";
+
+    private static final Pattern WHITESPACE = Pattern.compile("[" + WHITESPACE_CHARACTERS + "]+");
     private static final Pattern NOT_SLUG = Pattern.compile("[^a-z0-9]+");
     private static final Pattern EDGE_HYPHENS = Pattern.compile("^-+|-+$");
     private static final String DEFAULT_GAP = "  ";
@@ -101,7 +112,7 @@ public final class Text {
                 boolean right = column < align.size() && align.get(column) == Align.RIGHT;
                 cells.add(right ? padLeft(cell, widths[column]) : padRight(cell, widths[column]));
             }
-            lines.add(String.join(gap, cells).stripTrailing());
+            lines.add(trimEnd(String.join(gap, cells)));
         }
         return lines;
     }
@@ -185,7 +196,63 @@ public final class Text {
      * @return the text with single spaces
      */
     public static String squash(String text) {
-        return WHITESPACE.matcher(text).replaceAll(" ").strip();
+        return trim(WHITESPACE.matcher(text).replaceAll(" "));
+    }
+
+    /**
+     * @param character a character
+     * @return true when JavaScript counts it as white space
+     */
+    public static boolean isWhitespace(char character) {
+        return switch (character) {
+            case '\t',
+                    '\n',
+                    '\u000B',
+                    '\f',
+                    '\r',
+                    ' ',
+                    '\u00A0',
+                    '\u1680',
+                    '\u2028',
+                    '\u2029',
+                    '\u202F',
+                    '\u205F',
+                    '\u3000',
+                    '\uFEFF' -> true;
+            default -> character >= '\u2000' && character <= '\u200A';
+        };
+    }
+
+    /**
+     * White space taken off both ends, the way JavaScript's {@code trim()} takes it.
+     *
+     * @param text the text
+     * @return the text without white space at either end
+     */
+    public static String trim(String text) {
+        int start = 0;
+        int end = text.length();
+        while (start < end && isWhitespace(text.charAt(start))) {
+            start += 1;
+        }
+        while (end > start && isWhitespace(text.charAt(end - 1))) {
+            end -= 1;
+        }
+        return text.substring(start, end);
+    }
+
+    /**
+     * White space taken off the end, the way JavaScript's {@code trimEnd()} takes it.
+     *
+     * @param text the text
+     * @return the text without white space at the end
+     */
+    public static String trimEnd(String text) {
+        int end = text.length();
+        while (end > 0 && isWhitespace(text.charAt(end - 1))) {
+            end -= 1;
+        }
+        return text.substring(0, end);
     }
 
     /**
