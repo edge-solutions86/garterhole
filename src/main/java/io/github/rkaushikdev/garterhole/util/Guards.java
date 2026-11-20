@@ -125,6 +125,23 @@ public final class Guards {
     }
 
     /**
+     * A value that has to be there. In Java an argument cannot be of the wrong
+     * kind, but it can be missing, and the complaint should say what was wanted.
+     *
+     * @param <T> the type of the value
+     * @param value the value
+     * @param message the complaint when it is missing, for example {@code a Method is needed}
+     * @return the value
+     * @throws IllegalArgumentException when the value is {@code null}
+     */
+    public static <T> T present(T value, String message) {
+        if (value == null) {
+            throw new IllegalArgumentException(message);
+        }
+        return value;
+    }
+
+    /**
      * A function, which in Java can only be missing rather than of the wrong kind.
      *
      * @param <F> the functional type
