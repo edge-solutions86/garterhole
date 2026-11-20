@@ -11,6 +11,7 @@ import io.github.rkaushikdev.garterhole.cli.CommandContext;
 import io.github.rkaushikdev.garterhole.cli.FlagSpec;
 import io.github.rkaushikdev.garterhole.cli.ParsedArgs;
 import io.github.rkaushikdev.garterhole.core.Stage;
+import io.github.rkaushikdev.garterhole.http.routes.TowerRoutes;
 import io.github.rkaushikdev.garterhole.tower.Bell;
 import io.github.rkaushikdev.garterhole.tower.Tower;
 import io.github.rkaushikdev.garterhole.util.Json;
@@ -66,7 +67,7 @@ public final class TowerCommands {
         for (int index = 0; index < weights.size(); index += 1) {
             bells.addObject().put("number", index + 1).put("weight", weights.get(index));
         }
-        Tower tower = TowerDocuments.towerFrom(document);
+        Tower tower = TowerRoutes.towerFrom(document);
         ObjectNode stored = document.deepCopy();
         stored.put("id", tower.id());
         stored.put("size", tower.size());
@@ -115,7 +116,7 @@ public final class TowerCommands {
     public static void showTower(ParsedArgs parsed, CommandContext context) {
         String id = requireFlag(parsed, "id");
         JsonNode document = context.service().getTower(id);
-        context.output().answer(document, value -> describeTower(TowerDocuments.towerFrom(value)));
+        context.output().answer(document, value -> describeTower(TowerRoutes.towerFrom(value)));
     }
 
     private static List<String> describeTower(Tower tower) {
