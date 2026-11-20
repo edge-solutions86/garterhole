@@ -1,0 +1,91 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'jacoco'
+    id 'com.diffplug.spotless' version '7.0.4'
+}
+
+group = 'io.github.rkaushikdev'
+version = '1.0.0'
+description = 'Method, composition, striking and tower tooling for change ringing bands'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'info.picocli:picocli:4.7.7'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.21.4'
+    annotationProcessor 'info.picocli:picocli-codegen:4.7.7'
+
+    testImplementation platform('org.junit:junit-bom:5.12.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.assertj:assertj-core:3.27.7'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+application {
+    mainClass = 'io.github.rkaushikdev.garterhole.cli.Main'
+    applicationName = 'garterhole'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-Xlint:all'
+}
+
+tasks.named('compileJava') {
+    options.compilerArgs << "-Aproject=${project.group}/${project.name}"
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    // The tests read the repository's own files (sources, docs, changelog),
+    // so they run from the project directory whatever the caller's directory.
+    workingDir = projectDir
+    finalizedBy 'jacocoTestReport'
+}
+
+jacoco {
+    toolVersion = '0.8.13'
+}
+
+tasks.named('jacocoTestReport') {
+    dependsOn 'test'
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+tasks.named('jacocoTestCoverageVerification') {
+    dependsOn 'test'
+    violationRules {
+        rule {
+            limit {
+                counter = 'LINE'
+                minimum = 0.80
+            }
+        }
+    }
+}
+
+tasks.named('check') {
+    dependsOn 'jacocoTestCoverageVerification'
+}
+
+spotless {
+    java {
+        target 'src/**/*.java'
+        palantirJavaFormat()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}

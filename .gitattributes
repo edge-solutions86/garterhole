@@ -2,14 +2,20 @@
 #
 # Without this, a Windows checkout converts line endings and the working tree
 # stops matching the repository. That is not a cosmetic difference: it broke a
-# build here, where three scripts carried a shebang and the Windows checkout
-# turned the first line into something the loader would not accept while every
-# other platform was fine.
+# build here once, when a checkout turned the first line of a script into
+# something the loader would not accept while every other platform was fine.
 #
 # A test asserts the line endings, and this is what makes that test true rather
 # than merely true on the machine it was written on.
 * text=auto eol=lf
 
+# The wrapper scripts: the unix one must stay unix, and the Windows ones must
+# stay Windows, or the shell that runs them refuses the first line.
+gradlew text eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+*.jar binary
 *.png binary
 *.jpg binary
 *.gif binary

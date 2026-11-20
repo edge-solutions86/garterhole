@@ -1,9 +1,23 @@
+# Build output
+build/
+target/
+out/
+.gradle/
+bin/main/
+bin/test/
+
+# Editors
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Local data and scratch
+data/
+tmp/
+*.log
+*.local.json
+
+# The original JavaScript tooling, until it is removed
 node_modules/
 coverage/
-*.log
-.DS_Store
-.idea/
-.vscode/
-tmp/
-data/
-*.local.json
