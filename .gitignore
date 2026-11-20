@@ -17,7 +17,3 @@ data/
 tmp/
 *.log
 *.local.json
-
-# The original JavaScript tooling, until it is removed
-node_modules/
-coverage/

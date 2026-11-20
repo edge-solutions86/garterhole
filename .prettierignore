@@ -1,6 +1,0 @@
-node_modules
-coverage
-package-lock.json
-
-# written by scripts/routes.mjs, so the generator decides its layout
-docs/surface.md
