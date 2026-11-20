@@ -175,6 +175,33 @@ class ProgramTest {
         }
     }
 
+    @Nested
+    class Serving {
+
+        @Test
+        void servesTheDataDirectoryTheProgramWouldOtherwiseHaveLocked() {
+            Path data = directory.resolve("served");
+            java.util.concurrent.atomic.AtomicReference<App.Running> started =
+                    new java.util.concurrent.atomic.AtomicReference<>();
+            Program.Options options = Program.Options.of(
+                            Map.of("GARTERHOLE_DATA", data.toString(), "GARTERHOLE_LOG_LEVEL", "silent"))
+                    .withOutput(new Output())
+                    .withListener(environment -> {
+                        started.set(App.start(App.Options.of(environment)));
+                        return started.get();
+                    });
+            try {
+                assertThat(Program.run(List.of("serve", "--port", "0"), options))
+                        .isZero();
+                assertThat(started.get().port()).isPositive();
+                assertThat(data.resolve("lock")).exists();
+            } finally {
+                started.get().close();
+            }
+            assertThat(data.resolve("lock")).doesNotExist();
+        }
+    }
+
     /** The same program driven the way the entry point drives it: through picocli, onto its writers. */
     @Nested
     class ThroughPicocli {
