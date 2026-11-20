@@ -2,18 +2,6 @@
 
 ## Unreleased
 
-### Changed
-
-- Ported from JavaScript to Java 21. The command line, the HTTP routes, the
-  settings and the journal format are unchanged, so an existing data directory
-  loads as it is. The build is Gradle: `./gradlew build` runs what
-  `npm run verify` did, and the scripts that were under `scripts/` are Gradle
-  tasks of the same names (`surface`, `surfaceCheck`, `releaseCheck`, `smoke`
-  and `bench`).
-- JSON is written byte for byte the way the JavaScript version wrote it, and
-  text is trimmed with JavaScript's idea of white space, so the journal, the
-  HTTP bodies and the command line output read the same.
-
 ### Fixed
 
 - `serve` no longer locks the data directory twice. The command line used to

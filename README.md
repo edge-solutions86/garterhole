@@ -162,9 +162,3 @@ usual symbols, so `1234567890ET` covers stages up to Maximus. Place notation
 uses `x` for a cross change and `.` as a separator, with `,` marking the
 palindromic fold. Bell weights are written the way a tower board writes them:
 `23-2-11` is twenty three hundredweight, two quarters and eleven pounds.
-
-## History
-
-garterhole was first written in JavaScript, for Node, and was ported to Java 21
-in November 2026. The journal format did not change, so a data directory
-written by the JavaScript version loads in the Java one.
